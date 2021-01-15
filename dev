@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+built_image_name="uaa-bot"
+
+main() {
+  [[ $# -eq 0 ]] && usage "Expected command."
+
+  cd "$(git rev-parse --show-toplevel)"
+
+  command="$1"
+  shift
+
+  case $command in
+    -h)
+      usage
+      ;;
+    black)
+      build_image
+      black "$@"
+      ;;
+    tests)
+      build_image
+      tests "$@"
+      ;;
+    watch-tests)
+      build_image
+      watch-tests "$@"
+      ;;
+    run)
+      build_image
+      run "$@"
+      ;;
+    update-requirements)
+      build_image
+      update-requirements "$@"
+      ;;
+    *)
+      usage "Unknown command: $command"
+      ;;
+  esac
+}
+
+build_image() {
+  # The build-args are used to create a user with the same UID/GID as
+  # yourself. That way, any files written to the $PWD mount will be owned by
+  # you.  This user is embedded in the docker image, so the resulting image
+  # should only be used locally.  These arguments are not used in our
+  # concourse pipeline.
+  echo "Building image..."
+  docker build \
+    --quiet \
+    --file=docker/Dockerfile.dev \
+    --tag=${built_image_name} \
+    --build-arg UID="$(id -u)" \
+    --build-arg GID="$(id -g)" \
+    --build-arg USER="$USER" \
+    .
+}
+
+run_docker() {
+  docker run \
+    --rm \
+    -it \
+    -v "$PWD:/app" \
+    "${built_image_name}" \
+    "$*"
+}
+
+run_docker_read_only() {
+  docker \
+    run \
+    --rm \
+    -it \
+    -v "$PWD:/app:ro" \
+    -v "$PWD/tmp:/app/tmp:rw" \
+    -v "$PWD/logs:/app/logs:rw" \
+    -v "$PWD/.pytest_cache:/app/.pytest_cache:rw" \
+    "${built_image_name}" \
+    "$*"
+}
+
+black() {
+  run_docker python -m black uaa_bot tests
+}
+
+tests() {
+  run_docker_read_only docker/tests "$@"
+}
+
+watch-tests() {
+  run_docker_read_only docker/tests watch "$@"
+}
+
+run() {
+  run_docker "$@"
+}
+
+update-requirements() {
+  run "docker/update-requirements-txt"
+}
+
+usage() {
+  [[ $# -gt 0 ]] && echo "ERROR: $*"
+  local me=$(basename "$0")
+  cat <<-EOF
+  USAGE: $me COMMAND
+  Run workflows via the development docker image.
+  This provides a consistent developer experience, and avoids the "works on my
+  laptop" issue.
+  Examples:
+    # Run the tests once
+    $me
+    # Same as above
+    $me tests
+    # Continually watch for file changes and runs tests
+    $me watch-tests
+    # Generate the pip-tools/*requirements.txt files from
+    # pip-tools/*requirements.in
+    $me update-requirements
+    # Run command 'foo' in the container
+    $me run foo
+	EOF
+  exit 1
+}
+
+main "$@"
