@@ -1,6 +1,6 @@
 import pytest
 from email_validator import EmailNotValidError
-from mock import Mock, patch
+from mock import patch
 from uaa_bot import config, notifier
 
 email = "test@example.com"
