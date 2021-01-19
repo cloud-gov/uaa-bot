@@ -1,6 +1,7 @@
 from posixpath import join as urljoin
 import json
-import base64
+import time
+
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -62,6 +63,18 @@ class UAAClient(object):
             return None
         return self.uaa_config["UAA_CLIENT_SECRET"]
 
+    def _get_past_epoch_in_ms(self, days_ago: int) -> int:
+        """
+        Return the epoch (milliseconds) integer based on the number of days ago
+        Args:
+            days_ago: Integer of the number of days ago back
+        Returns:
+            int: the epoch of the day n number of days ago.
+        """
+        current_epoch = int(time.time() * 1000)
+        subtract_days = 60 * 60 * 24 * 1000 * days_ago
+        return current_epoch - subtract_days
+
     def _request(
         self,
         resource,
@@ -119,7 +132,7 @@ class UAAClient(object):
             return json.loads(response.text)
         return response.text
 
-    def authenticate(self):
+    def authenticate(self) -> None:
         """
         Sets the client credentials token property
         Raises:UAAError: there was an error getting the token
@@ -131,3 +144,48 @@ class UAAClient(object):
             auth=HTTPBasicAuth(self.client_id, self.client_secret),
         )
         self.token = response.get("access_token", None)
+
+    def list_expiring_users(self, days_ago: int) -> dict:
+        """
+        Gets a list of users based on last long in for the day n number of days ago
+        Args:
+            days_ago: int: The number of days ago
+        Raises:UAAError: there was an error getting users
+        Returns:
+            dict: the list of users with last login
+        """
+        start_of_day = self._get_past_epoch_in_ms(days_ago)
+        end_of_day = self._get_past_epoch_in_ms(days_ago - 1)
+
+        # Param filters for UAA SCIM
+        filter_origin = 'origin eq "cloud.gov"'
+        filter_active = "active eq true"
+        # Note - UAA API docs say "lastLogonTime" but the field attribute
+        # is actually "last_logon_success_time" per https://github.com/cloudfoundry/uaa/issues/542
+        filter_last_logon = (
+            f"last_logon_success_time ge {start_of_day}"
+            f" and "
+            f"last_logon_success_time le {end_of_day}"
+        )
+
+        response = self._request(
+            "/Users",
+            "GET",
+            params={
+                "filter": f"{filter_origin} and {filter_active} and {filter_last_logon}"
+            },
+        )
+
+        return response
+
+    def deactivate_user(self, user_guid: str) -> dict:
+        """
+        Deactivate a user
+        Args:
+            user_guid: str: The user guid to deactivate them
+        Returns:
+            dict: Returns the response dict after updating user
+        """
+        response = self._request(f"/Users/{user_guid}", "PUT", body={"active": "false"})
+
+        return response
