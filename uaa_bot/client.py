@@ -145,7 +145,7 @@ class UAAClient(object):
         )
         self.token = response.get("access_token", None)
 
-    def list_expiring_users(self, days_ago: int) -> dict:
+    def list_expiring_users(self, days_ago: int, days_range: int = 1) -> dict:
         """
         Gets a list of users based on last long in for the day n number of days ago
         Args:
@@ -154,8 +154,8 @@ class UAAClient(object):
         Returns:
             dict: the list of users with last login
         """
-        start_of_day = self._get_past_epoch_in_ms(days_ago)
-        end_of_day = self._get_past_epoch_in_ms(days_ago - 1)
+        start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
+        end_of_day = self._get_past_epoch_in_ms(days_ago)
 
         # Param filters for UAA SCIM
         filter_origin = 'origin eq "cloud.gov"'
