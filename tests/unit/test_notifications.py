@@ -2,11 +2,8 @@ import pytest
 from email_validator import EmailNotValidError
 from mock import patch
 from uaa_bot import config, notifier
-from fixtures.config import (
-    SMTP_CONFIG,
-    user_email,
-    username
-)
+from fixtures.config import SMTP_CONFIG, user_email, username
+
 
 def test_render_account_expired_template():
     template = "account_expired"
@@ -92,6 +89,4 @@ def test_send_email_auth(smtp_connection):
     smtp_connection.SMTP.assert_called_with(
         SMTP_CONFIG["SMTP_HOST"], SMTP_CONFIG["SMTP_PORT"]
     )
-    smtp_connection.SMTP().login.assert_called_with(
-        "user", SMTP_CONFIG["SMTP_PASS"]
-    )
+    smtp_connection.SMTP().login.assert_called_with("user", SMTP_CONFIG["SMTP_PASS"])

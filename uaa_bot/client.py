@@ -35,8 +35,7 @@ class UAAClient(object):
         [uaa_config]: Optional UAA config if the default is not provided in env variables
     """
 
-    def __init__(self, base_url: str, token=None, uaa_config=config.uaa):
-        self.base_url = base_url
+    def __init__(self, token: str = None, uaa_config: dict = config.uaa):
         self.token = token
         self.uaa_config = uaa_config
 
@@ -50,6 +49,12 @@ class UAAClient(object):
         for k, v in config.uaa.items():
             uaa_config[k] = value.get(k, v)
         self._uaa_config = uaa_config
+
+    @property
+    def base_url(self):
+        if not self.uaa_config["UAA_BASE_URL"]:
+            return "None"
+        return self.uaa_config["UAA_BASE_URL"]
 
     @property
     def client_id(self):

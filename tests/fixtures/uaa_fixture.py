@@ -93,11 +93,22 @@ def uaa_deactivate_user(requests_mock, uaa_authenticated, deactivate_user_guid):
 
 
 @pytest.fixture
+def uaa_deactivate_multiple_users(requests_mock, uaa_authenticated, last_logon_config):
+    days_ago = last_logon_config["days_ago"]
+    resources = create_uaa_users_last_logged_in(**last_logon_config)
+    response = create_uaa_response(resources=resources)
+    users_request_url = f"{base_url}/Users"
+    requests_mock.get(users_request_url, json=response)
+
+    for user in response.get("resources"):
+        user_guid = user.get("id")
+        deactivate_request_url = f"{base_url}/Users/{user_guid}"
+        requests_mock.put(deactivate_request_url, json=user)
+
+
+@pytest.fixture
 def uaa_list_expiring_users(requests_mock, uaa_authenticated, last_logon_config):
     days_ago = last_logon_config["days_ago"]
-    current_time = time.time()
-    last_logon_start = get_epoch_days_ago(days_ago, current_time)
-    last_logon_end = get_epoch_days_ago(days_ago - 1, current_time)
     resources = create_uaa_users_last_logged_in(**last_logon_config)
     response = create_uaa_response(resources=resources)
     request_url = f"{base_url}/Users"
