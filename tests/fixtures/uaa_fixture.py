@@ -10,7 +10,12 @@ def get_epoch_days_ago(days_ago: int, current_time: float) -> int:
 
 
 def create_uaa_user(
-    idx=1, origin="cloud.gov", active="true", email="", last_logon_time=int
+    idx: int = 1,
+    user_guid: str = "abcd-efg",
+    origin: str = "cloud.gov",
+    active: str = "true",
+    email: str = "",
+    last_logon_time: int = 0,
 ) -> dict:
     if not email:
         email = f"user-{idx}@example.com"
@@ -20,7 +25,7 @@ def create_uaa_user(
         last_logon_time = int(time.time()) * 1000
 
     return {
-        "id": "abcd-efg",
+        "id": user_guid,
         "externalId": email,
         "userName": email,
         "active": active,
@@ -33,8 +38,8 @@ def create_uaa_user(
 
 
 def create_uaa_users_last_logged_in(
-    total_results=10,
-    days_ago=90,
+    total_results: int = 10,
+    days_ago: int = 90,
 ) -> list:
     users = []
     current_time = time.time()
@@ -80,7 +85,15 @@ def uaa_unauthorized(requests_mock):
 
 
 @pytest.fixture
-def uaa_list_expiring_users(requests_mock, last_logon_config):
+def uaa_deactivate_user(requests_mock, uaa_authenticated, deactivate_user_guid):
+    user = create_uaa_user(user_guid=deactivate_user_guid, active="false")
+    response = create_uaa_response(resources=[user], total_results=1)
+    request_url = f"{base_url}/Users/{deactivate_user_guid}"
+    requests_mock.put(request_url, json=response)
+
+
+@pytest.fixture
+def uaa_list_expiring_users(requests_mock, uaa_authenticated, last_logon_config):
     days_ago = last_logon_config["days_ago"]
     current_time = time.time()
     last_logon_start = get_epoch_days_ago(days_ago, current_time)

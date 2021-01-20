@@ -2,6 +2,7 @@ import pytest
 
 from fixtures.uaa_fixture import (
     uaa_authenticated,
+    uaa_deactivate_user,
     uaa_list_expiring_users,
     uaa_unauthorized,
 )
