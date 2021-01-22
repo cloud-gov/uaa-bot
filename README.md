@@ -6,6 +6,12 @@ A bot to send notifications, disable accounts, and other tasks related to cloud.
 
 ### Running locally
 
+Setup a virtualenv
+`$ python -m venv`
+
+Start the virtualenv
+`$ source ./venv/bin/activate`
+
 Install and update python requirements into the docker image
 `$ ./dev update-requirements`
 
