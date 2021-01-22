@@ -5,9 +5,10 @@ jobs:
 
 - name: test-bot
   plan:
-  - get: src-repository
-    resource: src-repository
-    trigger: true
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      trigger: true
   - task: run-tests
     file: src-repository/ci/test-runner.yml
   on_failure:
