@@ -5,7 +5,7 @@ from uaa_bot.client import UAAClient
 from uaa_bot.config import smtp, uaa
 
 
-class UAABot(object):
+class UAABot:
     """
     The bot to notify and deactivate accounts
     """
