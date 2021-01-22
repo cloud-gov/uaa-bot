@@ -27,7 +27,7 @@ class UAAError(RuntimeError):
         super(UAAError, self).__init__(message)
 
 
-class UAAClient(object):
+class UAAClient:
     """
     A minimal client for the UAA API
     Args:
