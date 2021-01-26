@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from uaa_bot.client import UAAClient
 from uaa_bot.bot import UAABot
 
 parser = argparse.ArgumentParser(
@@ -71,19 +72,22 @@ parser_notify_deactivate = subparsers.add_parser(
     help="Notify users with email they have be deactivated after 90 days without login.",
 )
 
+## Notify and deactivate
+parser_list_expired_accounts = subparsers.add_parser(
+    "list-expired",
+    help="List users that have to be deactivated",
+)
+
 if __name__ == "__main__":
     args = parser.parse_args()
     bot = UAABot()
+    client = UAAClient()
 
     if args.command == "bulk-deactivate":
-        print(bot)
-        print(args.title)
-        print(args.day_range)
-        print(args.days_ago)
-        # summary = bot.deactivate_users(
-        #     days_ago=args.days_ago, days_range=args.day_range, summary_title=args.title
-        # )
-        # print(summary)
+        summary = bot.deactivate_users(
+            days_ago=args.days_ago, days_range=args.day_range, summary_title=args.title
+        )
+        print(summary)
 
     if args.command == "notify-10-days":
         summary = bot.notify_deactivation_in_10_days()
@@ -96,3 +100,8 @@ if __name__ == "__main__":
     if args.command == "notify-deactivate":
         summary = bot.notify_and_deactivate()
         print(summary)
+
+    if args.command == "list-expired":
+        client.authenticate()
+        response = client.list_expiring_users(days_ago=90, days_range=1000)
+        print(response)

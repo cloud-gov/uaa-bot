@@ -36,8 +36,8 @@ jobs:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    - get: daily-timer
-      trigger: true
+    # - get: daily-timer
+    #   trigger: true
   - task: run-bot-development-env
     file: src-repository/ci/bot-development-env.yml
     params:
@@ -84,12 +84,12 @@ resources:
     uri: https://github.com/cloud-gov/((name))
     branch: ((git-branch))
 
-- name: daily-timer
-  type: time
-  source:
-    start: 6:00 AM
-    stop: 7:00 AM
-    location: America/New_York
+# - name: daily-timer
+#   type: time
+#   source:
+#     start: 6:00 AM
+#     stop: 7:00 AM
+#     location: America/New_York
 
 - name: slack
   type: slack-notification
