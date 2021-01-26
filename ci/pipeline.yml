@@ -30,6 +30,46 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
+- name: bot-development-env
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+    - get: daily-timer
+      trigger: true
+  - task: run-bot-development-env
+    file: src-repository/ci/bot-development-env.yml
+    params:
+      SMTP_HOST: ((smtp-host))
+      SMTP_PORT: ((smtp-port))
+      SMTP_USER: ((smtp-user))
+      SMTP_PASS: ((smtp-pass))
+      SMTP_FROM: ((smtp-from))
+      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-development))
+      UAA_CLIENT_ID: ((uaa-client-id-development))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-development))
+      UAA_VERIFY_TLS: ((uaa-verify-tls))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to bulk deactivate users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully bulk deactivated users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
 
 ###########
 # Resources
@@ -43,6 +83,13 @@ resources:
   source:
     uri: https://github.com/cloud-gov/((name))
     branch: ((git-branch))
+
+- name: daily-timer
+  type: time
+  source:
+    start: 6:00 AM
+    stop: 7:00 AM
+    location: America/New_York
 
 - name: slack
   type: slack-notification

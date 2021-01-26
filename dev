@@ -42,7 +42,7 @@ main() {
 }
 
 black() {
-  python -m black uaa_bot tests
+  python -m black uaa_bot tests cli
 }
 
 install-all-reqs() {
