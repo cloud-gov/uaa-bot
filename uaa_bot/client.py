@@ -137,6 +137,58 @@ class UAAClient:
             return json.loads(response.text)
         return response.text
 
+    def _paginated_request(
+        self,
+        resource,
+        method,
+        prev_resources: list = [],
+        body=None,
+        params=None,
+        auth=None,
+        headers=None,
+        is_json=True,
+    ):
+        if "startIndex" not in params:
+            params["startIndex"] = 1
+
+        response = self._request(
+            resource,
+            method,
+            body=body,
+            params=params,
+            auth=auth,
+            headers=headers,
+            is_json=is_json,
+        )
+
+        resources = response.get("resources")
+        start_index = response.get("startIndex")
+        items_per_page = response.get("itemsPerPage")
+        total_results = response.get("totalResults")
+
+        resources.extend(prev_resources)
+
+        if (start_index + items_per_page - 1) < total_results:
+            params["startIndex"] = start_index + items_per_page
+
+            return self._paginated_request(
+                resource,
+                method,
+                prev_resources=resources,
+                body=body,
+                params=params,
+                auth=auth,
+                headers=headers,
+                is_json=is_json,
+            )
+        else:
+            return {
+                "startIndex": start_index,
+                "itemsPerPage": items_per_page,
+                "resources": resources,
+                "totalResults": total_results,
+            }
+
     def authenticate(self) -> None:
         """
         Sets the client credentials token property
@@ -150,7 +202,14 @@ class UAAClient:
         )
         self.token = response.get("access_token", None)
 
-    def list_expiring_users(self, days_ago: int, days_range: int = 1) -> dict:
+    def list_expiring_users(
+        self,
+        days_ago: int = 90,
+        days_range: int = 1,
+        start_of_day: int = None,
+        end_of_day: int = None,
+        **kwargs,
+    ) -> dict:
         """
         Gets a list of users based on last long in for the day n number of days ago
         Args:
@@ -159,8 +218,13 @@ class UAAClient:
         Returns:
             dict: the list of users with last login
         """
-        start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
-        end_of_day = self._get_past_epoch_in_ms(days_ago)
+        params = kwargs.get("params", {})
+
+        if start_of_day is None:
+            start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
+
+        if end_of_day is None:
+            end_of_day = self._get_past_epoch_in_ms(days_ago)
 
         # Param filters for UAA SCIM
         filter_origin = 'origin eq "cloud.gov"'
@@ -172,13 +236,15 @@ class UAAClient:
             f" and "
             f"last_logon_success_time le {end_of_day}"
         )
+        filter_params = {
+            "filter": f"{filter_origin} and {filter_active} and {filter_last_logon}"
+        }
+        params.update(filter_params)
 
-        response = self._request(
+        response = self._paginated_request(
             "/Users",
             "GET",
-            params={
-                "filter": f"{filter_origin} and {filter_active} and {filter_last_logon}"
-            },
+            params=params,
         )
 
         return response

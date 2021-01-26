@@ -37,6 +37,41 @@ def test_client_list_expiring_users(uaa_list_expiring_users):
 
 
 @pytest.mark.parametrize(
+    "last_logon_config",
+    [{"total_results": 100, "start_of_day": 10000, "end_of_day": 11000}],
+)
+def test_client_list_expiring_users_with_start_end_epoch(uaa_list_expiring_users):
+    uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
+    uaac.authenticate()
+    response = uaac.list_expiring_users(start_of_day=10000, end_of_day=11000)
+
+    assert uaac.token == authenticated_response.get("access_token")
+    assert response["totalResults"] == 100
+    assert len(response["resources"]) == 100
+
+
+@pytest.mark.parametrize(
+    "last_logon_config",
+    [
+        {
+            "total_results": 200,
+            "results_per_page": 100,
+            "start_of_day": 10000,
+            "end_of_day": 11000,
+        }
+    ],
+)
+def test_client_list_expiring_users_with_multiple_pages(uaa_list_users_multiple_pages):
+    uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
+    uaac.authenticate()
+    response = uaac.list_expiring_users(start_of_day=10000, end_of_day=11000)
+
+    assert uaac.token == authenticated_response.get("access_token")
+    assert response["totalResults"] == 200
+    assert len(response["resources"]) == 200
+
+
+@pytest.mark.parametrize(
     "deactivate_user_guid",
     [sample_user_guid],
 )

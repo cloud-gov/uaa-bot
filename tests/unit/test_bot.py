@@ -59,3 +59,27 @@ def test_notification_10_days_out(smtp_connection, uaa_deactivate_multiple_users
     assert summary.get("title") == "Account of deactivations in 10 days"
     assert summary.get("total_accounts") == 100
     assert len(summary.get("user_summary")) == 100
+
+
+@pytest.mark.parametrize(
+    "last_logon_config",
+    [
+        {
+            "total_results": 200,
+            "results_per_page": 100,
+            "start_of_day": 10000,
+            "end_of_day": 11000,
+        }
+    ],
+)
+def test_deactivate_multiple_pages_of_users(uaa_deactivate_multiple_pages_of_users):
+    summary_title = "Deactivating pages of users test"
+    bot = UAABot(smtp_config=SMTP_CONFIG, uaa_config=UAA_CONFIG)
+    summary = bot.deactivate_users(
+        start_of_day=10000, end_of_day=11000, summary_title=summary_title
+    )
+
+    assert summary["title"] == summary_title
+    assert summary["total_accounts"] == 200
+    assert len(summary["user_summary"]) == 200
+    assert type(summary) == dict

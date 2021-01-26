@@ -39,7 +39,7 @@ class UAABot:
         summary = self._summary_response(summary_title, users)
         return summary
 
-    def _summary_response(self, title: str, users: dict) -> dict:
+    def _summary_response(self, title: str, users: list = []) -> dict:
         timestamp = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
         return {
             "title": title,
@@ -47,6 +47,39 @@ class UAABot:
             "total_accounts": len(users),
             "user_summary": users,
         }
+
+    def deactivate_users(
+        self,
+        days_ago: int = 90,
+        days_range: int = 1,
+        summary_title: str = "Deactivated users",
+        start_of_day: int = None,
+        end_of_day: int = None,
+        params: dict = {},
+    ) -> dict:
+        users = []
+        uaac = UAAClient(uaa_config=self.uaa_config)
+        uaac.authenticate()
+
+        if start_of_day and end_of_day:
+            response = uaac.list_expiring_users(
+                start_of_day=start_of_day, end_of_day=end_of_day, params=params
+            )
+        else:
+            response = uaac.list_expiring_users(
+                days_ago=days_ago, days_range=days_range, params=params
+            )
+
+        resources = response.get("resources")
+
+        for user in resources:
+            user_email = user.get("userName")
+            user_guid = user.get("id")
+            deactivated_response = uaac.deactivate_user(user_guid)
+            users.append({user_email, user_guid})
+
+        summary = self._summary_response(summary_title, users)
+        return summary
 
     def notify_and_deactivate(self) -> dict:
         """
