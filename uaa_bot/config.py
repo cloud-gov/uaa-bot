@@ -23,7 +23,6 @@ UAA_KEYS = {
     "UAA_BASE_URL": "https://uaa.bosh-lite.com",
     "UAA_CLIENT_ID": None,
     "UAA_CLIENT_SECRET": None,
-    "UAA_VERIFY_TLS": True,
 }
 
 smtp = parse_config_env(SMTP_KEYS)

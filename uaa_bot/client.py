@@ -124,7 +124,6 @@ class UAAClient:
             endpoint,
             params=params,
             json=body,
-            verify=self.uaa_config["UAA_VERIFY_TLS"],
             headers=int_headers,
             auth=auth,
         )
