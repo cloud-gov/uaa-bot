@@ -109,6 +109,46 @@ jobs:
       icon_url: ((slack-icon-url))
 
 
+- name: bot-production-env
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+    # - get: daily-timer
+    #   trigger: true
+  - task: run-bot-production-env
+    file: src-repository/ci/bot-production-env.yml
+    params:
+      SMTP_HOST: ((smtp-host))
+      SMTP_PORT: ((smtp-port))
+      SMTP_USER: ((smtp-user))
+      SMTP_PASS: ((smtp-pass))
+      SMTP_FROM: ((smtp-from))
+      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-production))
+      UAA_CLIENT_ID: ((uaa-client-id-production))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to bulk deactivate users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully bulk deactivated users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
+
 ###########
 # Resources
 
