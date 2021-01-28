@@ -115,4 +115,4 @@ if __name__ == "__main__":
         for user in users:
             guid = user.get("id", "No GUID")
             email = user.get("userName", "Not Found")
-            print(f"Email: {user}, GUID: {guid}")
+            print(f"Email: {email}, GUID: {guid}")
