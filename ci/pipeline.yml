@@ -36,17 +36,43 @@ jobs:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    # - get: daily-timer
-    #   trigger: true
   - task: run-bot-development-list-expired
     file: src-repository/ci/bot-development-list-expired.yml
     params:
-      SMTP_HOST: ((smtp-host))
-      SMTP_PORT: ((smtp-port))
-      SMTP_USER: ((smtp-user))
-      SMTP_PASS: ((smtp-pass))
-      SMTP_FROM: ((smtp-from))
-      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-development))
+      UAA_CLIENT_ID: ((uaa-client-id-development))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-development))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to list expired users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully listed expired users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
+- name: bot-development-bulk-deactivate
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+  - task: run-bot-development-bulk-deactivate
+    file: src-repository/ci/bot-development-bulk-deactivate.yml
+    params:
+      DAYS_AGO: 90
+      NUMBER_DAYS_BEFORE: 1000
+      SUMMARY_TITLE: "Users deactivated from development"
       UAA_BASE_URL: ((uaa-base-url-development))
       UAA_CLIENT_ID: ((uaa-client-id-development))
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))
@@ -75,17 +101,43 @@ jobs:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    # - get: daily-timer
-    #   trigger: true
   - task: run-bot-staging-list-expired
     file: src-repository/ci/bot-staging-list-expired.yml
     params:
-      SMTP_HOST: ((smtp-host))
-      SMTP_PORT: ((smtp-port))
-      SMTP_USER: ((smtp-user))
-      SMTP_PASS: ((smtp-pass))
-      SMTP_FROM: ((smtp-from))
-      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-staging))
+      UAA_CLIENT_ID: ((uaa-client-id-staging))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-staging))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to list expired users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully listed expired users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
+- name: bot-staging-bulk-deactivate
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+  - task: run-bot-staging-bulk-deactivate
+    file: src-repository/ci/bot-staging-bulk-deactivate.yml
+    params:
+      DAYS_AGO: 90
+      NUMBER_DAYS_BEFORE: 1000
+      SUMMARY_TITLE: "Users deactivated from staging"
       UAA_BASE_URL: ((uaa-base-url-staging))
       UAA_CLIENT_ID: ((uaa-client-id-staging))
       UAA_CLIENT_SECRET: ((uaa-client-secret-staging))
@@ -108,24 +160,15 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
-
 - name: bot-production-list-expired
   plan:
   - in_parallel:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    # - get: daily-timer
-    #   trigger: true
   - task: run-bot-production-list-expired
     file: src-repository/ci/bot-production-list-expired.yml
     params:
-      SMTP_HOST: ((smtp-host))
-      SMTP_PORT: ((smtp-port))
-      SMTP_USER: ((smtp-user))
-      SMTP_PASS: ((smtp-pass))
-      SMTP_FROM: ((smtp-from))
-      SMTP_CERT: ((smtp-cert))
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))

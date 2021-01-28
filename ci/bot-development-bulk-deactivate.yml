@@ -17,4 +17,4 @@ run:
     cd src-repository
     pip install --upgrade pip
     pip install -r requirements.txt
-    # Do not run yet python ./cli notify-1-day
+    python ./cli bulk-deactivate -d $DAYS_AGO -r $NUMBER_DAYS_BEFORE -t $SUMMARY_TITLE
