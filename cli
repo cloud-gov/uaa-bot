@@ -108,4 +108,11 @@ if __name__ == "__main__":
     if args.command == "list-expired":
         client.authenticate()
         response = client.list_expiring_users(days_ago=90, days_range=1000)
-        pp.pprint(response)
+        total_results = response.get("totalResults", 0)
+        users = response.get("resources", [])
+        print(f"Total Expired Users: {total_results}")
+
+        for user in users:
+            guid = user.get("id", "No GUID")
+            email = user.get("userName", "Not Found")
+            print(f"Email: {user[]}, GUID: {guid}")

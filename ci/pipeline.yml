@@ -30,7 +30,7 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
-- name: bot-development-env
+- name: bot-development-list-expired
   plan:
   - in_parallel:
     - get: src-repository
@@ -38,8 +38,8 @@ jobs:
       passed: [test-bot]
     # - get: daily-timer
     #   trigger: true
-  - task: run-bot-development-env
-    file: src-repository/ci/bot-development-env.yml
+  - task: run-bot-development-list-expired
+    file: src-repository/ci/bot-development-list-expired.yml
     params:
       SMTP_HOST: ((smtp-host))
       SMTP_PORT: ((smtp-port))
@@ -69,7 +69,7 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
-- name: bot-staging-env
+- name: bot-staging-list-expired
   plan:
   - in_parallel:
     - get: src-repository
@@ -77,8 +77,8 @@ jobs:
       passed: [test-bot]
     # - get: daily-timer
     #   trigger: true
-  - task: run-bot-staging-env
-    file: src-repository/ci/bot-staging-env.yml
+  - task: run-bot-staging-list-expired
+    file: src-repository/ci/bot-staging-list-expired.yml
     params:
       SMTP_HOST: ((smtp-host))
       SMTP_PORT: ((smtp-port))
@@ -109,7 +109,7 @@ jobs:
       icon_url: ((slack-icon-url))
 
 
-- name: bot-production-env
+- name: bot-production-list-expired
   plan:
   - in_parallel:
     - get: src-repository
@@ -117,8 +117,8 @@ jobs:
       passed: [test-bot]
     # - get: daily-timer
     #   trigger: true
-  - task: run-bot-production-env
-    file: src-repository/ci/bot-production-env.yml
+  - task: run-bot-production-list-expired
+    file: src-repository/ci/bot-production-list-expired.yml
     params:
       SMTP_HOST: ((smtp-host))
       SMTP_PORT: ((smtp-port))
@@ -148,6 +148,122 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
+- name: bot-production-notify-1-day
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+    # - get: daily-timer
+    #   trigger: true
+  - task: run-bot-production-notify-1-day
+    file: src-repository/ci/bot-production-notify-1-day.yml
+    params:
+      SMTP_HOST: ((smtp-host))
+      SMTP_PORT: ((smtp-port))
+      SMTP_USER: ((smtp-user))
+      SMTP_PASS: ((smtp-pass))
+      SMTP_FROM: ((smtp-from))
+      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-production))
+      UAA_CLIENT_ID: ((uaa-client-id-production))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to notify users with 1 day until deactivation with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully notified users with 1 day until deactivation with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
+- name: bot-production-notify-10-days
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+    # - get: daily-timer
+    #   trigger: true
+  - task: run-bot-production-notify-10-days
+    file: src-repository/ci/bot-production-notify-10-days.yml
+    params:
+      SMTP_HOST: ((smtp-host))
+      SMTP_PORT: ((smtp-port))
+      SMTP_USER: ((smtp-user))
+      SMTP_PASS: ((smtp-pass))
+      SMTP_FROM: ((smtp-from))
+      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-production))
+      UAA_CLIENT_ID: ((uaa-client-id-production))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to notify users with 10 days until deactivation with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully notified users with 10 days until deactivation with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
+- name: bot-production-notify-deactivate
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+    # - get: daily-timer
+    #   trigger: true
+  - task: run-bot-production-notify-deactivate
+    file: src-repository/ci/bot-production-notify-deactivate.yml
+    params:
+      SMTP_HOST: ((smtp-host))
+      SMTP_PORT: ((smtp-port))
+      SMTP_USER: ((smtp-user))
+      SMTP_PASS: ((smtp-pass))
+      SMTP_FROM: ((smtp-from))
+      SMTP_CERT: ((smtp-cert))
+      UAA_BASE_URL: ((uaa-base-url-production))
+      UAA_CLIENT_ID: ((uaa-client-id-production))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to deactivate users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully deactivate users with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
 
 ###########
 # Resources

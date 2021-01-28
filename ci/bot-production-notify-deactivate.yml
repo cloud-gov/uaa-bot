@@ -1,0 +1,20 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: python
+    tag: 3.8
+
+inputs:
+- name: src-repository
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    cd src-repository
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    python ./cli notify-deactivate
