@@ -17,4 +17,4 @@ run:
     cd src-repository
     pip install --upgrade pip
     pip install -r requirements.txt
-    python ./cli bulk-deactivate -d $DAYS_AGO -r $NUMBER_DAYS_BEFORE -t $SUMMARY_TITLE
+    python ./cli bulk-deactivate -d $DAYS_AGO -r $NUMBER_DAYS_BEFORE -t "$SUMMARY_TITLE"
