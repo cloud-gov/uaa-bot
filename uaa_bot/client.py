@@ -248,14 +248,24 @@ class UAAClient:
 
         return response
 
-    def deactivate_user(self, user_guid: str) -> dict:
+    def deactivate_user(self, user: dict) -> dict:
         """
         Deactivate a user
         Args:
-            user_guid: str: The user guid to deactivate them
+            user: dict: The user object
         Returns:
             dict: Returns the response dict after updating user
         """
-        response = self._request(f"/Users/{user_guid}", "PUT", body={"active": "false"})
+        user_guid = user.get("id")
+        meta = user.get("meta", {})
+        version = meta.get("version")
+        user["active"] = False
+
+        response = self._request(
+            f"/Users/{user_guid}",
+            "PUT",
+            body=user,
+            headers={"If-Match": f"{version}", "Content-Type": "application/json"},
+        )
 
         return response

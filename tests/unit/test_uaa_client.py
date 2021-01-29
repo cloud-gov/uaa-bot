@@ -76,9 +76,10 @@ def test_client_list_expiring_users_with_multiple_pages(uaa_list_users_multiple_
     [sample_user_guid],
 )
 def test_client_deactivate_user(uaa_deactivate_user):
+    deactivated_user = uaa_deactivate_user
     uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
     uaac.authenticate()
-    response = uaac.deactivate_user(sample_user_guid)
+    response = uaac.deactivate_user(deactivated_user)
     user = response["resources"][0]
 
     assert uaac.token == authenticated_response.get("access_token")

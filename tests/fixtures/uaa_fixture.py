@@ -136,6 +136,7 @@ def uaa_deactivate_user(requests_mock, uaa_authenticated, deactivate_user_guid):
     response = create_uaa_response(resources=[user], total_results=1)
     request_url = build_url(f"/Users/{deactivate_user_guid}")
     requests_mock.put(request_url, json=response)
+    return user
 
 
 @pytest.fixture

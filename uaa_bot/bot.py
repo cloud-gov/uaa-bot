@@ -75,7 +75,7 @@ class UAABot:
         for user in resources:
             user_email = user.get("userName")
             user_guid = user.get("id")
-            deactivated_response = uaac.deactivate_user(user_guid)
+            deactivated_response = uaac.deactivate_user(user)
             users.append({user_email, user_guid})
 
         summary = self._summary_response(summary_title, users)
@@ -97,7 +97,7 @@ class UAABot:
                 user_email = user.get("userName")
                 user_guid = user.get("id")
                 notification = Notifier(user_email)
-                uaac.deactivate_user(user_guid)
+                uaac.deactivate_user(user)
                 notification.send_email("account_expired")
                 users.append({user_email, user_guid})
 
