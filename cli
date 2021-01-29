@@ -3,8 +3,9 @@
 import argparse
 import pprint
 
-from uaa_bot.client import UAAClient
 from uaa_bot.bot import UAABot
+from uaa_bot.client import UAAClient
+from uaa_bot.notifier import Notifier
 
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -56,6 +57,27 @@ parser_bulk_deactivate.add_argument(
     default="Bulk deactivation",
 )
 
+## Notify email
+parser_notify = subparsers.add_parser(
+    "notify",
+    help="Notify users with email to log in in 1 day or be deactivated.",
+)
+
+parser_notify.add_argument(
+    "-e",
+    "--email",
+    dest="email",
+    type=str,
+    required=True,
+)
+
+parser_notify.add_argument(
+    "-t",
+    "--template",
+    dest="template",
+    type=str,
+    required=True,
+)
 
 ## Notify 10 days to deactivation
 parser_notify_10_days = subparsers.add_parser(
@@ -92,6 +114,13 @@ if __name__ == "__main__":
             days_ago=args.days_ago, days_range=args.day_range, summary_title=args.title
         )
         pp.pprint(summary)
+
+    if args.command == "notify":
+        email = args.email
+        template = args.template
+        notification = Notifier(email)
+        sent_mail = notification.send_email(template)
+        print(sent_mail)
 
     if args.command == "notify-10-days":
         summary = bot.notify_deactivation_in_10_days()

@@ -108,5 +108,3 @@ class Notifier:
         s.quit()
 
         return True
-
-        return self.get_email_subject(template_name)
