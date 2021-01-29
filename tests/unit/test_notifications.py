@@ -11,7 +11,7 @@ def test_render_account_expired_template():
     rendered = notification.render_template(template, username=username)
 
     assert type(rendered) == str
-    assert f"Hello {username}" in rendered
+    assert f"Hello," in rendered
     assert "Your account has been" in rendered
     assert "deactivated" in rendered
 
@@ -22,7 +22,7 @@ def test_render_account_expiration_10_days_template():
     rendered = notification.render_template(template, username=username)
 
     assert type(rendered) == str
-    assert f"Hello {username}" in rendered
+    assert f"Hello," in rendered
     assert "Your account will be" in rendered
     assert "deactivated" in rendered
     assert "10 days" in rendered
@@ -34,7 +34,7 @@ def test_render_account_expiration_1_day_template():
     rendered = notification.render_template(template, username=username)
 
     assert type(rendered) == str
-    assert f"Hello {username}" in rendered
+    assert f"Hello," in rendered
     assert "Your account will be" in rendered
     assert "deactivated" in rendered
     assert "1 day" in rendered
