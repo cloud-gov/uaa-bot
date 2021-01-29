@@ -85,43 +85,33 @@ class UAABot:
         """
         Notify and deactivate users after 90 days without logging into cloud.gov
         """
-        try:
-            users = []
-            uaac = UAAClient(uaa_config=self.uaa_config)
-            uaac.authenticate()
-            response = uaac.list_expiring_users(90)
-            resources = response.get("resources")
+        users = []
+        uaac = UAAClient(uaa_config=self.uaa_config)
+        uaac.authenticate()
+        response = uaac.list_expiring_users(90)
+        resources = response.get("resources")
 
-            # Deactivate and send notification of account deactivation
-            for user in resources:
-                user_email = user.get("userName")
-                user_guid = user.get("id")
-                notification = Notifier(user_email)
-                uaac.deactivate_user(user)
-                notification.send_email("account_expired")
-                users.append({user_email, user_guid})
+        # Deactivate and send notification of account deactivation
+        for user in resources:
+            user_email = user.get("userName")
+            user_guid = user.get("id")
+            notification = Notifier(user_email)
+            uaac.deactivate_user(user)
+            notification.send_email("account_expired")
+            users.append({user_email, user_guid})
 
-            # Create and return summary of action
-            summary = self._summary_response("Deactivation of accounts", users)
-            return summary
-
-        except Exception as e:
-            raise (e)
+        # Create and return summary of action
+        summary = self._summary_response("Deactivation of accounts", users)
+        return summary
 
     def notify_deactivation_in_1_day(self) -> dict:
-        try:
-            summary = self._notify_deactivation_x_days_ago(
-                89, "Account of deactivations in 1 day", "account_expires_in_1_day"
-            )
-            return summary
-        except Exception as e:
-            raise (e)
+        summary = self._notify_deactivation_x_days_ago(
+            89, "Account of deactivations in 1 day", "account_expires_in_1_day"
+        )
+        return summary
 
     def notify_deactivation_in_10_days(self) -> dict:
-        try:
-            summary = self._notify_deactivation_x_days_ago(
-                80, "Account of deactivations in 10 days", "account_expires_in_10_days"
-            )
-            return summary
-        except Exception as e:
-            raise (e)
+        summary = self._notify_deactivation_x_days_ago(
+            80, "Account of deactivations in 10 days", "account_expires_in_10_days"
+        )
+        return summary

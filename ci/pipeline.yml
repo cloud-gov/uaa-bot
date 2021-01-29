@@ -30,37 +30,6 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
-- name: bot-development-list-expired
-  plan:
-  - in_parallel:
-    - get: src-repository
-      resource: src-repository
-      passed: [test-bot]
-  - task: run-bot-development-list-expired
-    file: src-repository/ci/bot-development-list-expired.yml
-    params:
-      UAA_BASE_URL: ((uaa-base-url-development))
-      UAA_CLIENT_ID: ((uaa-client-id-development))
-      UAA_CLIENT_SECRET: ((uaa-client-secret-development))
-  on_failure:
-    put: slack
-    params:
-      text: |
-        :x: FAILED to list expired users with uaa-bot
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-info-channel))
-      username: ((slack-username))
-      icon_url: ((slack-icon-url))
-  on_success:
-    put: slack
-    params:
-      text: |
-        :white_check_mark: Successfully listed expired users with uaa-bot
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-info-channel))
-      username: ((slack-username))
-      icon_url: ((slack-icon-url))
-
 - name: bot-development-bulk-deactivate
   plan:
   - in_parallel:
@@ -82,7 +51,7 @@ jobs:
     put: slack
     params:
       text: |
-        :x: FAILED to bulk deactivate users with uaa-bot
+        :x: FAILED to bulk deactivate users in development with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -91,38 +60,7 @@ jobs:
     put: slack
     params:
       text: |
-        :white_check_mark: Successfully bulk deactivated users with uaa-bot
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-info-channel))
-      username: ((slack-username))
-      icon_url: ((slack-icon-url))
-
-- name: bot-staging-list-expired
-  plan:
-  - in_parallel:
-    - get: src-repository
-      resource: src-repository
-      passed: [test-bot]
-  - task: run-bot-staging-list-expired
-    file: src-repository/ci/bot-staging-list-expired.yml
-    params:
-      UAA_BASE_URL: ((uaa-base-url-staging))
-      UAA_CLIENT_ID: ((uaa-client-id-staging))
-      UAA_CLIENT_SECRET: ((uaa-client-secret-staging))
-  on_failure:
-    put: slack
-    params:
-      text: |
-        :x: FAILED to list expired users with uaa-bot
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-info-channel))
-      username: ((slack-username))
-      icon_url: ((slack-icon-url))
-  on_success:
-    put: slack
-    params:
-      text: |
-        :white_check_mark: Successfully listed expired users with uaa-bot
+        :white_check_mark: Successfully bulk deactivated users in development with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -149,7 +87,7 @@ jobs:
     put: slack
     params:
       text: |
-        :x: FAILED to bulk deactivate users with uaa-bot
+        :x: FAILED to bulk deactivate users in staging with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -158,7 +96,41 @@ jobs:
     put: slack
     params:
       text: |
-        :white_check_mark: Successfully bulk deactivated users with uaa-bot
+        :white_check_mark: Successfully bulk deactivated users in staging with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
+- name: bot-production-bulk-deactivate
+  plan:
+  - in_parallel:
+    - get: src-repository
+      resource: src-repository
+      passed: [test-bot]
+  - task: run-bot-production-bulk-deactivate
+    file: src-repository/ci/bot-production-bulk-deactivate.yml
+    params:
+      DAYS_AGO: 545
+      NUMBER_DAYS_BEFORE: 1000
+      SUMMARY_TITLE: "Users deactivated from production"
+      UAA_BASE_URL: ((uaa-base-url-production))
+      UAA_CLIENT_ID: ((uaa-client-id-production))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to bulk deactivate users in production with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully bulk deactivated users in production with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -180,7 +152,7 @@ jobs:
     put: slack
     params:
       text: |
-        :x: FAILED to bulk deactivate users with uaa-bot
+        :x: FAILED to list expired users in production with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -189,7 +161,7 @@ jobs:
     put: slack
     params:
       text: |
-        :white_check_mark: Successfully bulk deactivated users with uaa-bot
+        :white_check_mark: Successfully listed expired users in production with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -297,7 +269,7 @@ jobs:
     put: slack
     params:
       text: |
-        :x: FAILED to deactivate users with uaa-bot
+        :x: FAILED to notify and deactivate users with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
@@ -306,7 +278,7 @@ jobs:
     put: slack
     params:
       text: |
-        :white_check_mark: Successfully deactivate users with uaa-bot
+        :white_check_mark: Successfully notified and deactivated users with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
