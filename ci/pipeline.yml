@@ -47,6 +47,9 @@ jobs:
       UAA_BASE_URL: ((uaa-base-url-development))
       UAA_CLIENT_ID: ((uaa-client-id-development))
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))
+  - put: uaa-bot-bucket
+    params:
+      file: /uaa-bot/*/summary-*.json
   on_failure:
     put: slack
     params:
@@ -111,8 +114,8 @@ jobs:
   - task: run-bot-production-bulk-deactivate
     file: src-repository/ci/bot-production-bulk-deactivate.yml
     params:
-      DAYS_AGO: 545
-      NUMBER_DAYS_BEFORE: 1000
+      DAYS_AGO: ((production-days-ago))
+      NUMBER_DAYS_BEFORE: ((production-number-days-before-days-ago))
       SUMMARY_TITLE: "Users deactivated from production"
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
@@ -148,6 +151,9 @@ jobs:
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  - put: uaa-bot-bucket
+    params:
+      file: /uaa-bot/*/summary-*.json
   on_failure:
     put: slack
     params:
@@ -309,6 +315,15 @@ resources:
   source:
     url: ((slack-webhook-url))
 
+- name: uaa-bot-bucket
+  type: s3-iam
+  icon: database
+  source:
+    bucket: ((uaa-bot-bucket))
+    region_name: ((uaa-bot-region))
+    regexp: /uaa-bot/(.*)/summary-(.*).json
+    server_side_encryption: AES256
+
 ################
 # Resource Types
 
@@ -318,3 +333,8 @@ resource_types:
   type: docker-image
   source:
     repository: cfcommunity/slack-notification-resource
+
+- name: s3-iam
+  type: docker-image
+  source:
+    repository: 18fgsa/s3-resource
