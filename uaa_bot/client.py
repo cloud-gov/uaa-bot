@@ -226,19 +226,19 @@ class UAAClient:
             end_of_day = self._get_past_epoch_in_ms(days_ago)
 
         # Param filters for UAA SCIM
-        filter_origin = 'origin eq "cloud.gov"'
-        filter_active = "active eq true"
+        scim_origin = 'origin eq "cloud.gov"'
+        scim_active = "active eq true"
         # Note - UAA API docs say "lastLogonTime" but the field attribute
         # is actually "last_logon_success_time" per https://github.com/cloudfoundry/uaa/issues/542
-        filter_last_logon = (
+        scim_last_logon = (
             f"last_logon_success_time ge {start_of_day}"
             f" and "
             f"last_logon_success_time le {end_of_day}"
         )
-        filter_params = {
-            "filter": f"{filter_origin} and {filter_active} and {filter_last_logon}"
+        scim_filter = {
+            "filter": f"{scim_origin} and {scim_active} and {scim_last_logon}"
         }
-        params.update(filter_params)
+        params.update(scim_filter)
 
         response = self._paginated_request(
             "/Users",
