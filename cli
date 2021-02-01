@@ -82,7 +82,7 @@ parser_notify.add_argument(
 ## Notify 10 days to deactivation
 parser_notify_10_days = subparsers.add_parser(
     "notify-10-days",
-    help="Notify users with email to log in in 10 days or be deactivated.",
+    help="Notify users with an email to login to their accounts within 10 days or be deactivated.",
 )
 
 
