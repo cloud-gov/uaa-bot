@@ -173,8 +173,8 @@ jobs:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    # - get: daily-timer
-    #   trigger: true
+    - get: daily-timer
+      trigger: true
   - task: run-bot-production-notify-1-day
     file: src-repository/ci/bot-production-notify-1-day.yml
     params:
@@ -212,8 +212,8 @@ jobs:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    # - get: daily-timer
-    #   trigger: true
+    - get: daily-timer
+      trigger: true
   - task: run-bot-production-notify-10-days
     file: src-repository/ci/bot-production-notify-10-days.yml
     params:
@@ -251,8 +251,8 @@ jobs:
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
-    # - get: daily-timer
-    #   trigger: true
+    - get: daily-timer
+      trigger: true
   - task: run-bot-production-notify-deactivate
     file: src-repository/ci/bot-production-notify-deactivate.yml
     params:
