@@ -17,4 +17,4 @@ run:
     cd src-repository
     pip install --upgrade pip
     pip install -r requirements.txt
-    python ./cli list-expired
+    python ./cli list-expired >> uaa-bot/$BUILD_JOB_NAME/summary-$BUILD_NAME.json
