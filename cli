@@ -60,7 +60,7 @@ parser_bulk_deactivate.add_argument(
 ## Notify email
 parser_notify = subparsers.add_parser(
     "notify",
-    help="Notify users with email to log in in 1 day or be deactivated.",
+    help="Notify users with an email to login to their accounts within 1 day or be deactivated.",
 )
 
 parser_notify.add_argument(
