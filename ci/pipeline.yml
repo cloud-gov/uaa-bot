@@ -39,8 +39,9 @@ jobs:
     - get: daily-timer
       trigger: true
   - task: run-bot-development-bulk-deactivate
-    file: src-repository/ci/bot-development-bulk-deactivate.yml
+    file: src-repository/ci/run-bot-bulk-deactivate.yml
     params:
+      BUILD_JOB_NAME: development-bulk-deactivate
       DAYS_AGO: 90
       NUMBER_DAYS_BEFORE: 1000
       SUMMARY_TITLE: "Users deactivated from development"
@@ -49,7 +50,7 @@ jobs:
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))
   - put: uaa-bot-bucket
     params:
-      file: /uaa-bot/*/summary-*.json
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
@@ -78,14 +79,18 @@ jobs:
     - get: daily-timer
       trigger: true
   - task: run-bot-staging-bulk-deactivate
-    file: src-repository/ci/bot-staging-bulk-deactivate.yml
+    file: src-repository/ci/run-bot-bulk-deactivate.yml
     params:
+      BUILD_JOB_NAME: staging-bulk-deactivate
       DAYS_AGO: 90
       NUMBER_DAYS_BEFORE: 1000
       SUMMARY_TITLE: "Users deactivated from staging"
       UAA_BASE_URL: ((uaa-base-url-staging))
       UAA_CLIENT_ID: ((uaa-client-id-staging))
       UAA_CLIENT_SECRET: ((uaa-client-secret-staging))
+  - put: uaa-bot-bucket
+    params:
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
@@ -112,14 +117,18 @@ jobs:
       resource: src-repository
       passed: [test-bot]
   - task: run-bot-production-bulk-deactivate
-    file: src-repository/ci/bot-production-bulk-deactivate.yml
+    file: src-repository/ci/run-bot-bulk-deactivate.yml
     params:
+      BUILD_JOB_NAME: production-bulk-deactivate
       DAYS_AGO: ((production-days-ago))
       NUMBER_DAYS_BEFORE: ((production-number-days-before-days-ago))
       SUMMARY_TITLE: "Users deactivated from production"
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  - put: uaa-bot-bucket
+    params:
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
@@ -183,8 +192,10 @@ jobs:
     - get: daily-timer
       trigger: true
   - task: run-bot-production-notify-1-day
-    file: src-repository/ci/bot-production-notify-1-day.yml
+    file: src-repository/ci/run-bot-command.yml
     params:
+      BOT_COMMAND: notify-1-day
+      BUILD_JOB_NAME: production-notify-1-day
       SMTP_HOST: ((smtp-host))
       SMTP_PORT: ((smtp-port))
       SMTP_USER: ((smtp-user))
@@ -194,6 +205,9 @@ jobs:
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  - put: uaa-bot-bucket
+    params:
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
@@ -222,8 +236,10 @@ jobs:
     - get: daily-timer
       trigger: true
   - task: run-bot-production-notify-10-days
-    file: src-repository/ci/bot-production-notify-10-days.yml
+    file: src-repository/ci/run-bot-command.yml
     params:
+      BOT_COMMAND: notify-10-days
+      BUILD_JOB_NAME: production-notify-10-days
       SMTP_HOST: ((smtp-host))
       SMTP_PORT: ((smtp-port))
       SMTP_USER: ((smtp-user))
@@ -233,6 +249,9 @@ jobs:
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  - put: uaa-bot-bucket
+    params:
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
@@ -261,8 +280,10 @@ jobs:
     - get: daily-timer
       trigger: true
   - task: run-bot-production-notify-deactivate
-    file: src-repository/ci/bot-production-notify-deactivate.yml
+    file: src-repository/ci/run-bot-command.yml
     params:
+      BOT_COMMAND: notify-deactivate
+      BUILD_JOB_NAME: production-notify-deactivate
       SMTP_HOST: ((smtp-host))
       SMTP_PORT: ((smtp-port))
       SMTP_USER: ((smtp-user))
@@ -272,6 +293,9 @@ jobs:
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))
+  - put: uaa-bot-bucket
+    params:
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
