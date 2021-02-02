@@ -1,0 +1,24 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: python
+    tag: 3.8
+
+inputs:
+- name: src-repository
+
+outputs:
+- name: uaa-bot-summary
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    cd src-repository
+    export BUILD_DATE=$(date "+%Y-%m-%d")
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    python ./cli bulk-deactivate -d $DAYS_AGO -r $NUMBER_DAYS_BEFORE -t "$SUMMARY_TITLE" >> "../uaa-bot-summary/$BUILD_JOB_NAME-summary-$BUILD_DATE.json"

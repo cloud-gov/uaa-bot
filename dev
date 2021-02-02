@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+built_image_name="uaa-bot"
+
+main() {
+  [[ $# -eq 0 ]] && usage "Expected command."
+
+  cd "$(git rev-parse --show-toplevel)"
+
+  command="$1"
+  shift
+
+  case $command in
+    -h)
+      usage
+      ;;
+    black)
+      black
+      ;;
+    install-all-reqs)
+      install-all-reqs
+      ;;
+    install-prod-reqs)
+      install-prod-reqs
+      ;;
+    tests)
+      tests
+      ;;
+    watch-tests)
+      watch-tests
+      ;;
+    update-requirements)
+      update-requirements
+      install-all-reqs
+      ;;
+    *)
+      usage "Unknown command: $command"
+      ;;
+  esac
+}
+
+black() {
+  python -m black uaa_bot tests cli
+}
+
+install-all-reqs() {
+  pip install -r pip-tools/dev-requirements.txt
+}
+
+install-prod-reqs() {
+  pip install -r requirements.txt
+}
+
+tests() {
+  python -m pytest -Werror -vv
+}
+
+watch-tests() {
+  rptw --spool=1000 -n -c -w -- -Werror -vv
+}
+
+update-requirements() {
+  bash `pwd`/update-requirements.sh
+}
+
+usage() {
+  [[ $# -gt 0 ]] && echo "ERROR: $*"
+  local me=$(basename "$0")
+  cat <<-EOF
+  USAGE: $me COMMAND
+  Run workflows.
+  This provides a consistent developer experience, and avoids the "works on my
+  laptop" issue.
+  Examples:
+    # Same as above
+    $me tests
+    # Continually watch for file changes and runs tests
+    $me watch-tests
+    # Generate the pip-tools/*requirements.txt files from
+    # pip-tools/*requirements.in
+    $me update-requirements
+	EOF
+  exit 1
+}
+
+main "$@"

@@ -1,10 +1,28 @@
 # uaa-bot
 
-## Why this project
+A bot to send notifications, disable accounts, and other tasks related to cloud.gov UAA users.
 
-Here are the goals of this project and how we'll measure its success.
+## Getting started
 
-- 
+### Running locally
+
+Setup a virtualenv
+`$ python -m venv venv`
+
+Start the virtualenv
+`$ source ./venv/bin/activate`
+
+Install and update python requirements into the docker image
+`$ ./dev install-all-reqs`
+
+When adding a python dependency to dev-requirements or requirements into the docker image
+`$ ./dev update-requirements`
+
+Format python code
+`$ ./dev black`
+
+Run tests python code
+`$ ./dev tests`
 
 ## Contributing
 
