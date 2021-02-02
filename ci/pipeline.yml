@@ -141,19 +141,20 @@ jobs:
 
 - name: bot-production-list-expired
   plan:
-  - in_parallel:
-    - get: src-repository
-      resource: src-repository
-      passed: [test-bot]
+  - get: src-repository
+    resource: src-repository
+    passed: [test-bot]
   - task: run-bot-production-list-expired
-    file: src-repository/ci/bot-production-list-expired.yml
+    file: src-repository/ci/run-bot-command.yml
     params:
+      BUILD_JOB_NAME: production-list-expired
+      BOT_COMMAND: list-expired
       UAA_BASE_URL: ((uaa-base-url-production))
       UAA_CLIENT_ID: ((uaa-client-id-production))
       UAA_CLIENT_SECRET: ((uaa-client-secret-production))
   - put: uaa-bot-bucket
     params:
-      file: /uaa-bot/*/summary-*.json
+      file: uaa-bot-summary/*-summary-*.json
   on_failure:
     put: slack
     params:
@@ -321,7 +322,7 @@ resources:
   source:
     bucket: ((uaa-bot-bucket))
     region_name: ((uaa-bot-region))
-    regexp: /uaa-bot/(.*)/summary-(.*).json
+    regexp: /uaa-bot/(.*)-summary-(.*).json
     server_side_encryption: AES256
 
 ################

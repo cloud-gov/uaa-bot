@@ -9,12 +9,16 @@ image_resource:
 inputs:
 - name: src-repository
 
+outputs:
+- name: uaa-bot-summary
+
 run:
   path: bash
   args:
   - -c
   - |
     cd src-repository
+    export BUILD_DATE=$(date "+%Y-%m-%d")
     pip install --upgrade pip
     pip install -r requirements.txt
-    python ./cli list-expired >> uaa-bot/$BUILD_JOB_NAME/summary-$BUILD_NAME.json
+    python ./cli $BOT_COMMAND >> "../uaa-bot-summary/$BUILD_JOB_NAME-summary-$BUILD_DATE.json"
