@@ -29,7 +29,7 @@ def test_authenticates_client_unsuccessfully(uaa_unauthorized):
 def test_client_list_expiring_users(uaa_list_expiring_users):
     uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
     uaac.authenticate()
-    response = uaac.list_expiring_users(90)
+    response = uaac.list_expiring_users(days_ago=90)
 
     assert uaac.token == authenticated_response.get("access_token")
     assert response["totalResults"] == 100
