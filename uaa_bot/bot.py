@@ -24,7 +24,7 @@ class UAABot:
         users = []
         uaac = UAAClient(uaa_config=self.uaa_config)
         uaac.authenticate()
-        response = uaac.list_expiring_users(days_ago=90, days_range=1)
+        response = uaac.list_expiring_users(days_ago=days_ago)
         resources = response.get("resources")
 
         # Deactivate and send notification of account deactivation
