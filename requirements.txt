@@ -22,5 +22,5 @@ markupsafe==1.1.1
     # via jinja2
 requests==2.25.1
     # via -r pip-tools/requirements.in
-urllib3==1.26.2
+urllib3==1.26.8
     # via requests
