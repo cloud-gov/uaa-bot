@@ -16,9 +16,9 @@ idna==2.10
     # via
     #   email-validator
     #   requests
-jinja2==2.11.2
+jinja2==3.0.3
     # via -r pip-tools/requirements.in
-markupsafe==1.1.1
+markupsafe==2.1.0
     # via jinja2
 requests==2.25.1
     # via -r pip-tools/requirements.in

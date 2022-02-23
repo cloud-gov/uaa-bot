@@ -43,9 +43,9 @@ idna==2.10
     #   requests
 iniconfig==1.1.1
     # via pytest
-jinja2==2.11.2
+jinja2==3.0.3
     # via -r pip-tools/../requirements.txt
-markupsafe==1.1.1
+markupsafe==2.1.0
     # via
     #   -r pip-tools/../requirements.txt
     #   jinja2
