@@ -327,6 +327,7 @@ resources:
   source:
     uri: https://github.com/cloud-gov/((name))
     branch: ((git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: daily-timer
   type: time
