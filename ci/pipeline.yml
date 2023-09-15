@@ -6,10 +6,12 @@ jobs:
 - name: test-bot
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       trigger: true
   - task: run-tests
+    image: general-task
     file: src-repository/ci/test-runner.yml
   on_failure:
     put: slack
@@ -33,12 +35,14 @@ jobs:
 - name: bot-development-bulk-deactivate
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
     - get: daily-timer
       trigger: true
   - task: run-bot-development-bulk-deactivate
+    image: general-task
     file: src-repository/ci/run-bot-bulk-deactivate.yml
     params:
       BUILD_JOB_NAME: development-bulk-deactivate
@@ -73,12 +77,14 @@ jobs:
 - name: bot-staging-bulk-deactivate
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
     - get: daily-timer
       trigger: true
   - task: run-bot-staging-bulk-deactivate
+    image: general-task
     file: src-repository/ci/run-bot-bulk-deactivate.yml
     params:
       BUILD_JOB_NAME: staging-bulk-deactivate
@@ -113,10 +119,12 @@ jobs:
 - name: bot-production-bulk-deactivate
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
   - task: run-bot-production-bulk-deactivate
+    image: general-task
     file: src-repository/ci/run-bot-bulk-deactivate.yml
     params:
       BUILD_JOB_NAME: production-bulk-deactivate
@@ -150,10 +158,12 @@ jobs:
 
 - name: bot-production-list-expired
   plan:
+  - get: general-task
   - get: src-repository
     resource: src-repository
     passed: [test-bot]
   - task: run-bot-production-list-expired
+    image: general-task
     file: src-repository/ci/run-bot-command.yml
     params:
       BUILD_JOB_NAME: production-list-expired
@@ -186,12 +196,14 @@ jobs:
 - name: bot-production-notify-1-day
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
     - get: daily-timer
       trigger: true
   - task: run-bot-production-notify-1-day
+    image: general-task
     file: src-repository/ci/run-bot-command.yml
     params:
       BOT_COMMAND: notify-1-day
@@ -230,12 +242,14 @@ jobs:
 - name: bot-production-notify-10-days
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
     - get: daily-timer
       trigger: true
   - task: run-bot-production-notify-10-days
+    image: general-task
     file: src-repository/ci/run-bot-command.yml
     params:
       BOT_COMMAND: notify-10-days
@@ -274,12 +288,14 @@ jobs:
 - name: bot-production-notify-deactivate
   plan:
   - in_parallel:
+    - get: general-task
     - get: src-repository
       resource: src-repository
       passed: [test-bot]
     - get: daily-timer
       trigger: true
   - task: run-bot-production-notify-deactivate
+    image: general-task
     file: src-repository/ci/run-bot-command.yml
     params:
       BOT_COMMAND: notify-deactivate
@@ -350,17 +366,60 @@ resources:
     regexp: /uaa-bot/(.*)-summary-(.*).json
     server_side_encryption: AES256
 
+- name: general-task
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: general-task
+    aws_region: us-gov-west-1
+    tag: latest
+
 ################
 # Resource Types
 
 resource_types:
+- name: registry-image
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: registry-image-resource
+    aws_region: us-gov-west-1
+    tag: latest
 
 - name: slack-notification
-  type: docker-image
+  type: registry-image
   source:
-    repository: cfcommunity/slack-notification-resource
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: slack-notification-resource
+    aws_region: us-gov-west-1
+    tag: latest
 
 - name: s3-iam
-  type: docker-image
+  type: registry-image
   source:
-    repository: 18fgsa/s3-resource
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: s3-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+- name: git
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: git-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+- name: time
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: time-resource
+    aws_region: us-gov-west-1
+    tag: latest
