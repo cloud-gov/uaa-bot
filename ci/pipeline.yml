@@ -3,12 +3,21 @@
 
 jobs:
 
+- name: set-self
+  plan:
+  - get: src-repository
+    resource: src-repository
+    trigger: true
+  - set_pipeline: self
+    file: src-repository/ci/pipeline.yml
+
 - name: test-bot
   plan:
   - in_parallel:
     - get: general-task
     - get: src-repository
       resource: src-repository
+      passed: [set-self]
       trigger: true
   - task: run-tests
     image: general-task
