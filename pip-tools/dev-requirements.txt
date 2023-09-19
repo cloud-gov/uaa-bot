@@ -20,8 +20,10 @@ click==8.1.7
     # via
     #   black
     #   pip-tools
-colorama==0.4.6
-    # via pytest-watch
+colorama==0.4.4
+    # via
+    #   -r pip-tools/dev-requirements.in
+    #   pytest-watch
 dnspython==2.4.2
     # via
     #   -r pip-tools/../requirements.txt
@@ -102,7 +104,7 @@ tomli==2.0.1
     #   pytest
 typing-extensions==4.8.0
     # via black
-urllib3==2.0.4
+urllib3==1.26.16
     # via
     #   -r pip-tools/../requirements.txt
     #   requests

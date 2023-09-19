@@ -1,3 +1,4 @@
+urllib3==1.26.16
 email_validator
 Jinja2
 requests
