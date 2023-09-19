@@ -1,6 +1,7 @@
 # Include base requirements
 -r ../requirements.txt
 black
+colorama==0.4.4
 flake8
 mock
 pip-tools
