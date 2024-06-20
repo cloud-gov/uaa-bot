@@ -145,7 +145,7 @@ class UAABot:
         for user in resources:
             user_email = user.get("userName")
             user_guid = user.get("id")
-            user_last_logon = time.ctime(user.get("lastLogonTime"))
+            user_last_logon = time.ctime(user.get("lastLogonTime") / 1000)
             users.append(
                 {
                     "user_email": user_email,
