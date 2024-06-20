@@ -351,7 +351,7 @@ jobs:
     file: src-repository/ci/run-bot-command.yml
     params:
       BUILD_JOB_NAME: development-list-lastlogon
-      BOT_COMMAND: list-last-logon -d 0 -r $NUMBER_DAYS_BEFORE -t "$SUMMARY_TITLE"
+      BOT_COMMAND: list-last-logon -d 0 -r 265-t "$SUMMARY_TITLE"
       SUMMARY_TITLE: "Last Logons for users in Development"
       UAA_BASE_URL: ((uaa-base-url-development))
       UAA_CLIENT_ID: ((uaa-client-id-development))
