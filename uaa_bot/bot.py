@@ -145,7 +145,7 @@ class UAABot:
         for user in resources:
             user_email = user.get("userName")
             user_guid = user.get("id")
-            user_last_logon = user.get("lastLogonTime")
+            user_last_logon = strftime('%Y-%m-%d %H:%M:%S', localtime(user.get("lastLogonTime")))
             users.append(
                 {
                     "user_email": user_email,
