@@ -269,3 +269,50 @@ class UAAClient:
         )
 
         return response
+
+    def list_users_last_logon(
+        self,
+        days_ago: int = 0,
+        days_range: int = 365,
+        start_of_day: int = None,
+        end_of_day: int = None,
+        **kwargs,
+    ) -> dict:
+        """
+        Gets a list of users and their last log on
+        Raises:UAAError: there was an error getting users
+        Returns:
+            dict: the list of users with last login
+        """
+        params = kwargs.get("params", {})
+
+        if start_of_day is None:
+            start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
+
+        if end_of_day is None:
+            end_of_day = self._get_past_epoch_in_ms(days_ago)
+
+        scim_last_logon = (
+            f"last_logon_success_time ge {start_of_day}"
+            f" and "
+            f"last_logon_success_time le {end_of_day}"
+        )
+
+        # Param filters for UAA SCIM
+        scim_origin = 'origin eq "cloud.gov"'
+        scim_active = "active eq true"
+        # Note - UAA API docs say "lastLogonTime" but the field attribute
+        # is actually "last_logon_success_time" per https://github.com/cloudfoundry/uaa/issues/542
+        scim_filter = {
+            "filter": f"{scim_origin} and {scim_active} and {scim_last_logon}"
+        }
+
+        params.update(scim_filter)
+
+        response = self._paginated_request(
+            "/Users",
+            "GET",
+            params=params,
+        )
+
+        return response

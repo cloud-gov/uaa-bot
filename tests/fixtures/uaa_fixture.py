@@ -215,3 +215,34 @@ def uaa_list_expiring_users(requests_mock, uaa_authenticated, last_logon_config)
         request_url = build_url("/Users")
 
     requests_mock.get(request_url, json=response)
+
+
+@pytest.fixture
+def uaa_list_users_last_logon(requests_mock, uaa_authenticated, last_logon_config):
+    total_users_resources = []
+    start_of_day = last_logon_config.get("start_of_day", 10000)
+    end_of_day = last_logon_config.get("end_of_day", 11000)
+    results_per_page = last_logon_config.get("results_per_page", 100)
+    total_results = last_logon_config.get("total_results", 150)
+    pages = ceil(total_results / results_per_page)
+
+    for idx in range(pages):
+        start_index = (idx * results_per_page) + 1
+        resources = create_uaa_users_last_logged_in(
+            total_results=results_per_page,
+            start_of_day=start_of_day,
+            end_of_day=end_of_day,
+        )
+        total_users_resources.extend(resources)
+        response = create_uaa_response(
+            resources=resources, start_index=start_index, total_results=total_results
+        )
+        users_request_url = build_url(
+            "/Users",
+            start_of_day=start_of_day,
+            end_of_day=end_of_day,
+            startIndex=start_index,
+        )
+        requests_mock.get(users_request_url, json=response)
+
+    return total_users_resources

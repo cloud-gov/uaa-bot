@@ -340,6 +340,46 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
 
+- name: bot-development-list-lastlogon
+  plan:
+  - get: general-task
+  - get: src-repository
+    resource: src-repository
+    passed: [test-bot]
+  - task: run-bot-development-list-lastlogon
+    image: general-task
+    file: src-repository/ci/run-bot-command.yml
+    params:
+      BUILD_JOB_NAME: development-list-lastlogon
+      BOT_COMMAND: list-last-logon
+      DAYS_AGO: 0
+      NUMBER_DAYS_BEFORE: 365
+      SUMMARY_TITLE: "Last Logons for users in Development"
+      UAA_BASE_URL: ((uaa-base-url-development))
+      UAA_CLIENT_ID: ((uaa-client-id-development))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-development))
+  - put: uaa-bot-bucket
+    params:
+      file: uaa-bot-summary/*-summary-*.json
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to list last logon for users in development with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully listed last logon for users in development with uaa-bot
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-info-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+
 ###########
 # Resources
 

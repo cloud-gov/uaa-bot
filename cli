@@ -104,6 +104,44 @@ parser_list_expired_accounts = subparsers.add_parser(
     help="List users that have to be deactivated",
 )
 
+## List Last Logons for Users
+parser_list_last_logon = subparsers.add_parser(
+    "list-last-logon",
+    help=(
+        f"List last logon info for users",
+    ),
+)
+
+parser_list_last_logon.add_argument(
+    "-d",
+    "--days-ago",
+    dest="days_ago",
+    type=int,
+    help="End of time range for the n number of days ago.",
+    required=True,
+    default=180,
+)
+
+parser_list_last_logon.add_argument(
+    "-r",
+    "--day-range",
+    dest="day_range",
+    type=int,
+    help="The n number of days to create a range before the --days-ago param.",
+    required=True,
+    default=365,
+)
+
+parser_list_last_logon.add_argument(
+    "-t",
+    "--title",
+    dest="title",
+    type=str,
+    help="The title of the summary of the List Last Logon.",
+    required=False,
+    default="Last Logons for all users",
+)
+
 if __name__ == "__main__":
     args = parser.parse_args()
     bot = UAABot()
@@ -145,3 +183,7 @@ if __name__ == "__main__":
             guid = user.get("id", "No GUID")
             email = user.get("userName", "Not Found")
             print(f"Email: {email}, GUID: {guid}")
+
+    if args.command == "list-last-logon":
+        summary = bot.list_users_last_logon(days_ago=0, days_range=365, summary_title=args.title)
+        pp.print(summary)
