@@ -409,7 +409,7 @@ resources:
   source:
     bucket: ((uaa-bot-bucket))
     region_name: ((uaa-bot-region))
-    regexp: /uaa-bot/(.*)-summary-(.*).json
+    regexp: /uaa-bot/(.*)-summary(.*).json
     server_side_encryption: AES256
 
 - name: general-task
