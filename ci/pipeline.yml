@@ -348,7 +348,7 @@ jobs:
     passed: [test-bot]
   - task: run-bot-development-list-lastlogon
     image: general-task
-    file: src-repository/ci/run-bot-command.yml
+    file: src-repository/ci/run-bot-command-no-date.yml
     params:
       BUILD_JOB_NAME: development-list-lastlogon
       BOT_COMMAND: list-last-logon -d 0 -r 14400
@@ -357,7 +357,7 @@ jobs:
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))
   - put: uaa-bot-bucket
     params:
-      file: uaa-bot-summary/*-summary-*.json
+      file: uaa-bot-summary/*-summary*.json
   on_failure:
     put: slack
     params:
