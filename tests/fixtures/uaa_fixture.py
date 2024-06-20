@@ -61,7 +61,7 @@ def build_url_no_filter(path, start_of_day: int = None, end_of_day: int = None, 
         f"last_logon_success_time le {end_of_day}"
     )
 
-    filter_params = f"{filter_origin} and {filter_active} and {filter_last_logon}"
+    filter_params = f"{filter_last_logon}"
 
     if params_string:
         return f"{base_url}{path}?filter={filter_params}&{params_string}"
