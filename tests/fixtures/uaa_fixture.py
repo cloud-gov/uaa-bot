@@ -40,6 +40,34 @@ def build_url(path, start_of_day: int = None, end_of_day: int = None, **params):
     else:
         return f"{base_url}{path}?filter={filter_params}"
 
+def build_url_no_filter(path, start_of_day: int = None, end_of_day: int = None, **params):
+    params_list = []
+
+    if params:
+        for k, v in params.items():
+            params_list.append(f"{k}={v}")
+
+    params_string = "&".join(params_list)
+
+    if not start_of_day and not end_of_day:
+        if params_string:
+            return f"{base_url}{path}?{params_string}"
+        else:
+            return f"{base_url}{path}"
+
+    filter_last_logon = (
+        f"last_logon_success_time ge {start_of_day}"
+        f" and "
+        f"last_logon_success_time le {end_of_day}"
+    )
+
+    filter_params = f"{filter_origin} and {filter_active} and {filter_last_logon}"
+
+    if params_string:
+        return f"{base_url}{path}?filter={filter_params}&{params_string}"
+    else:
+        return f"{base_url}{path}?filter={filter_params}"
+
 
 def create_uaa_user(
     idx: int = 1,
@@ -237,7 +265,7 @@ def uaa_list_users_last_logon(requests_mock, uaa_authenticated, last_logon_confi
         response = create_uaa_response(
             resources=resources, start_index=start_index, total_results=total_results
         )
-        users_request_url = build_url(
+        users_request_url = build_url_no_filter(
             "/Users",
             start_of_day=start_of_day,
             end_of_day=end_of_day,
