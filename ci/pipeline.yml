@@ -391,7 +391,7 @@ resources:
   check_every: 10s
   source:
     uri: https://github.com/cloud-gov/((name))
-    branch: ((git-branch))
+    branch: dashboard-lastlogon
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: daily-timer
