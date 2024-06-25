@@ -356,6 +356,7 @@ jobs:
       UAA_CLIENT_ID: ((uaa-client-id-development))
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))
   - put: development-dashboard-bucket
+    tags: [iaas]
     params:
       file: uaa-bot-summary/*-summary*.json
   on_failure:
