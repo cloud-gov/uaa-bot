@@ -355,7 +355,7 @@ jobs:
       UAA_BASE_URL: ((uaa-base-url-development))
       UAA_CLIENT_ID: ((uaa-client-id-development))
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))
-  - put: uaa-bot-bucket
+  - put: development-dashboard-bucket
     params:
       file: uaa-bot-summary/*-summary*.json
   on_failure:
@@ -409,7 +409,16 @@ resources:
   source:
     bucket: ((uaa-bot-bucket))
     region_name: ((uaa-bot-region))
-    regexp: /uaa-bot/(.*)-summary(.*).json
+    regexp: /uaa-bot/(.*)-summary-(.*).json
+    server_side_encryption: AES256
+
+- name: development-dashboard-bucket
+  type: s3-iam
+  icon: database
+  source:
+    bucket: ((dashboard-bucket-development))
+    region_name: ((uaa-bot-region))
+    regexp: (.*)summary(.*).json
     server_side_encryption: AES256
 
 - name: general-task
