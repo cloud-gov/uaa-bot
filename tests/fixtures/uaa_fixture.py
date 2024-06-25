@@ -40,7 +40,10 @@ def build_url(path, start_of_day: int = None, end_of_day: int = None, **params):
     else:
         return f"{base_url}{path}?filter={filter_params}"
 
-def build_url_no_filter(path, start_of_day: int = None, end_of_day: int = None, **params):
+
+def build_url_no_filter(
+    path, start_of_day: int = None, end_of_day: int = None, **params
+):
     params_list = []
 
     if params:

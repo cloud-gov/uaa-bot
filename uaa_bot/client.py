@@ -299,13 +299,11 @@ class UAAClient:
         )
 
         # Param filters for UAA SCIM
-        #scim_origin = 'origin eq "cloud.gov"'
-        #scim_active = "active eq true"
+        # scim_origin = 'origin eq "cloud.gov"'
+        # scim_active = "active eq true"
         # Note - UAA API docs say "lastLogonTime" but the field attribute
         # is actually "last_logon_success_time" per https://github.com/cloudfoundry/uaa/issues/542
-        scim_filter = {
-            "filter": f"{scim_last_logon}"
-        }
+        scim_filter = {"filter": f"{scim_last_logon}"}
 
         params.update(scim_filter)
 

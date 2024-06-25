@@ -107,9 +107,7 @@ parser_list_expired_accounts = subparsers.add_parser(
 ## List Last Logons for Users
 parser_list_last_logon = subparsers.add_parser(
     "list-last-logon",
-    help=(
-        f"List last logon info for users",
-    ),
+    help=(f"List last logon info for users",),
 )
 
 parser_list_last_logon.add_argument(
@@ -185,5 +183,7 @@ if __name__ == "__main__":
             print(f"Email: {email}, GUID: {guid}")
 
     if args.command == "list-last-logon":
-        summary = bot.get_all_user_last_logon(days_ago=0, days_range=365, summary_title=args.title)
+        summary = bot.get_all_user_last_logon(
+            days_ago=0, days_range=365, summary_title=args.title
+        )
         pp.pprint(summary)
