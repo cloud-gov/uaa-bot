@@ -31,7 +31,7 @@ class Notifier:
     def email(self, value):
         try:
             valid = validate_email(value)
-            self._email = valid.email
+            self._email = valid.normalized
         except EmailNotValidError as e:
             raise (e)
 

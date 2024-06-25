@@ -1,4 +1,4 @@
-# uaa-bot 
+# uaa-bot
 
 A bot to send notifications, disable accounts, and other tasks related to cloud.gov UAA users.
 
@@ -12,11 +12,14 @@ Setup a virtualenv
 Start the virtualenv
 `$ source ./venv/bin/activate`
 
-Install and update python requirements into the docker image
+Install and update python requirements into your virtualenvironment
 `$ ./dev install-all-reqs`
 
-When adding a python dependency to dev-requirements or requirements into the docker image
+When adding a python dependency to dev-requirements or requirements
 `$ ./dev update-requirements`
+
+Upgrade all requirements
+`$ ./dev update-requirements --upgrade`
 
 Format python code
 `$ ./dev black`
