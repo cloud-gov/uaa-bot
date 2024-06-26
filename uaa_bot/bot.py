@@ -143,16 +143,15 @@ class UAABot:
 
         # Get user with their last logon info
         for user in resources:
-            user_email = user.get("userName")
+            username = user.get("userName")
             user_guid = user.get("id")
-            user_last_logon = time.ctime(user.get("lastLogonTime") / 1000)
+            user_last_logon = time.strftime("%a, %d %b %Y %H:%M:%S +0000", user.get("lastLogonTime") / 1000)
             user_active = user.get("active")
             users.append(
-                {
-                    "user_email": user_email,
-                    "user_guid": user_guid,
-                    "user_last_logon": user_last_logon,
-                    "activated_user": user_active,
+                user_guid: {
+                    "userName": username,
+                    "lastLogonTime": user_last_logon,
+                    "active": user_active,
                 }
             )
 
