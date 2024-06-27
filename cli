@@ -2,6 +2,7 @@
 
 import argparse
 import pprint
+import json
 
 from uaa_bot.bot import UAABot
 from uaa_bot.client import UAAClient
