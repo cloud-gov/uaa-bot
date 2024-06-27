@@ -128,7 +128,7 @@ class UAABot:
         """
         Gets list of users and their last logon info
         """
-        users = dict()
+        users = {}
         uaac = UAAClient(uaa_config=self.uaa_config)
         uaac.authenticate()
         if start_of_day and end_of_day:
@@ -143,17 +143,19 @@ class UAABot:
 
         # Get user with their last logon info
         for user in resources:
-            user_guid = user.get("id")
-            users[user_guid] = {}
-            users[user_guid]["userName"] = user.get("userName")
-            users[user_guid]["lastLogonTime"] = user_last_logon = time.strftime("%a, %d %b %Y %H:%M:%S +0000", user.get("lastLogonTime") / 1000)
-            users[user_guid]["active"] = user.get("active").lower()
+            users[user["id"]] = {
+                "userName": user["userName"],
+                "active": user["active"].lower(),
+                "lastLogonTime": time.strftime(
+                    "%a, %d %b %Y %H:%M:%S +0000", time.gmtime(user["lastLogonTime"])
+                ),
+            }
 
         # Create and return summary of users' last logon
         summary = self._summary_response_with_last_logon(summary_title, users)
         return summary
 
-    def _summary_response_with_last_logon(self, title: str, users: list = []) -> dict:
+    def _summary_response_with_last_logon(self, title: str, users: dict = {}) -> dict:
         timestamp = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
         return {
             "title": title,
