@@ -1,4 +1,5 @@
 import time
+import json
 
 from uaa_bot.notifier import Notifier
 from uaa_bot.client import UAAClient
@@ -145,7 +146,7 @@ class UAABot:
         for user in resources:
             users[user["id"]] = {
                 "userName": user["userName"],
-                "active": str(user["active"]).lower(),
+                "active": json.dumps(user["active"]),
                 "lastLogonTime": time.strftime(
                     "%a, %d %b %Y %H:%M:%S +0000", time.gmtime(user["lastLogonTime"])
                 ),
