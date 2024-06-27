@@ -145,7 +145,7 @@ class UAABot:
         for user in resources:
             users[user["id"]] = {
                 "userName": user["userName"],
-                "active": user["active"].lower(),
+                "active": str(user["active"]).lower(),
                 "lastLogonTime": time.strftime(
                     "%a, %d %b %Y %H:%M:%S +0000", time.gmtime(user["lastLogonTime"])
                 ),
