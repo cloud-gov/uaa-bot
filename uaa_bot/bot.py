@@ -148,7 +148,7 @@ class UAABot:
                 "userName": user["userName"],
                 "active": json.dumps(user["active"]),
                 "lastLogonTime": time.strftime(
-                    "%a, %d %b %Y %H:%M:%S +0000", time.gmtime(user["lastLogonTime"])
+                    "%a, %d %b %Y %H:%M:%S +0000", time.gmtime(user["lastLogonTime"] / 1000)
                 ),
             }
 
