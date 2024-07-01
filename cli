@@ -185,6 +185,6 @@ if __name__ == "__main__":
 
     if args.command == "list-last-logon":
         summary = bot.get_all_user_last_logon(
-            days_ago=0, days_range=365, summary_title=args.title
+            days_ago=0, days_range=365
         )
         print(json.dumps(summary))

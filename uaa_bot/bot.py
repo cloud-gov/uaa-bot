@@ -121,7 +121,6 @@ class UAABot:
         self,
         days_ago: int = 0,
         days_range: int = 365,
-        summary_title: str = "List Users",
         start_of_day: int = None,
         end_of_day: int = None,
         params: dict = {},
@@ -154,13 +153,12 @@ class UAABot:
             }
 
         # Create and return summary of users' last logon
-        summary = self._summary_response_with_last_logon(summary_title, users)
+        summary = self._summary_response_with_last_logon(users)
         return summary
 
-    def _summary_response_with_last_logon(self, title: str, users: dict = {}) -> dict:
+    def _summary_response_with_last_logon(self, users: dict = {}) -> dict:
         timestamp = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
         return {
-            "title": title,
             "timestamp": timestamp,
             "total_accounts": len(users),
             "user_summary": users,

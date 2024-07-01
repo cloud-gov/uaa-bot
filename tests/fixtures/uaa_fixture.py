@@ -119,7 +119,9 @@ def create_uaa_users_last_logged_in(
     for x in range(total_results):
         user = {}
         last_logon_time = randint(start_of_day, end_of_day)
-        user = create_uaa_user(idx=x, user_guid=str(uuid.uuid4()),last_logon_time=last_logon_time)
+        user = create_uaa_user(
+            idx=x, user_guid=str(uuid.uuid4()), last_logon_time=last_logon_time
+        )
         users.append(user)
 
     return users

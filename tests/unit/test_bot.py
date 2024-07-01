@@ -97,13 +97,11 @@ def test_deactivate_multiple_pages_of_users(uaa_deactivate_multiple_pages_of_use
     ],
 )
 def test_get_all_user_last_logons(uaa_list_users_last_logon):
-    summary_title = "List of Users and their last logon"
     bot = UAABot(smtp_config=SMTP_CONFIG, uaa_config=UAA_CONFIG)
     summary = bot.get_all_user_last_logon(
-        start_of_day=10000, end_of_day=11000, summary_title=summary_title
+        start_of_day=10000, end_of_day=11000
     )
 
-    assert summary["title"] == summary_title
     assert summary["total_accounts"] == 200
     assert len(summary["user_summary"]) == 200
     assert type(summary) == dict
