@@ -9,5 +9,6 @@ from fixtures.uaa_fixture import (
     uaa_list_users_multiple_pages,
     uaa_list_expiring_users,
     uaa_unauthorized,
+    uaa_list_users_last_logon,
 )
 from fixtures.config import authenticated_response, base_url
