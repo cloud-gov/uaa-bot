@@ -22,10 +22,7 @@ subparsers = parser.add_subparsers(
 ## Bulk deactivation
 parser_bulk_deactivate = subparsers.add_parser(
     "bulk-deactivate",
-    help=(
-        f"Deactivate accounts that have not been logged in many months ",
-        f"without sending email notification.",
-    ),
+    help="Deactivate accounts that have not been logged in many months without sending email notification.",
 )
 
 parser_bulk_deactivate.add_argument(
@@ -108,7 +105,7 @@ parser_list_expired_accounts = subparsers.add_parser(
 ## List Last Logons for Users
 parser_list_last_logon = subparsers.add_parser(
     "list-last-logon",
-    help=(f"List last logon info for users",),
+    help="List last logon info for users",
 )
 
 parser_list_last_logon.add_argument(
@@ -184,5 +181,7 @@ if __name__ == "__main__":
             print(f"Email: {email}, GUID: {guid}")
 
     if args.command == "list-last-logon":
-        summary = bot.get_all_user_last_logon(days_ago=0, days_range=365)
+        summary = bot.get_all_user_last_logon(
+            days_ago=0, days_range=365
+        )
         print(json.dumps(summary))
