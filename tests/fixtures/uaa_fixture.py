@@ -1,6 +1,7 @@
 import pytest
 from math import ceil
 import time
+import uuid
 from random import randint
 
 from fixtures.config import authenticated_response, base_url
@@ -34,6 +35,37 @@ def build_url(path, start_of_day: int = None, end_of_day: int = None, **params):
     )
 
     filter_params = f"{filter_origin} and {filter_active} and {filter_last_logon}"
+
+    if params_string:
+        return f"{base_url}{path}?filter={filter_params}&{params_string}"
+    else:
+        return f"{base_url}{path}?filter={filter_params}"
+
+
+def build_url_no_filter(
+    path, start_of_day: int = None, end_of_day: int = None, **params
+):
+    params_list = []
+
+    if params:
+        for k, v in params.items():
+            params_list.append(f"{k}={v}")
+
+    params_string = "&".join(params_list)
+
+    if not start_of_day and not end_of_day:
+        if params_string:
+            return f"{base_url}{path}?{params_string}"
+        else:
+            return f"{base_url}{path}"
+
+    filter_last_logon = (
+        f"last_logon_success_time ge {start_of_day}"
+        f" and "
+        f"last_logon_success_time le {end_of_day}"
+    )
+
+    filter_params = f"{filter_last_logon}"
 
     if params_string:
         return f"{base_url}{path}?filter={filter_params}&{params_string}"
@@ -87,7 +119,9 @@ def create_uaa_users_last_logged_in(
     for x in range(total_results):
         user = {}
         last_logon_time = randint(start_of_day, end_of_day)
-        user = create_uaa_user(idx=x, last_logon_time=last_logon_time)
+        user = create_uaa_user(
+            idx=x, user_guid=str(uuid.uuid4()), last_logon_time=last_logon_time
+        )
         users.append(user)
 
     return users
@@ -215,3 +249,34 @@ def uaa_list_expiring_users(requests_mock, uaa_authenticated, last_logon_config)
         request_url = build_url("/Users")
 
     requests_mock.get(request_url, json=response)
+
+
+@pytest.fixture
+def uaa_list_users_last_logon(requests_mock, uaa_authenticated, last_logon_config):
+    total_users_resources = []
+    start_of_day = last_logon_config.get("start_of_day", 10000)
+    end_of_day = last_logon_config.get("end_of_day", 11000)
+    results_per_page = last_logon_config.get("results_per_page", 100)
+    total_results = last_logon_config.get("total_results", 150)
+    pages = ceil(total_results / results_per_page)
+
+    for idx in range(pages):
+        start_index = (idx * results_per_page) + 1
+        resources = create_uaa_users_last_logged_in(
+            total_results=results_per_page,
+            start_of_day=start_of_day,
+            end_of_day=end_of_day,
+        )
+        total_users_resources.extend(resources)
+        response = create_uaa_response(
+            resources=resources, start_index=start_index, total_results=total_results
+        )
+        users_request_url = build_url_no_filter(
+            "/Users",
+            start_of_day=start_of_day,
+            end_of_day=end_of_day,
+            startIndex=start_index,
+        )
+        requests_mock.get(users_request_url, json=response)
+
+    return total_users_resources

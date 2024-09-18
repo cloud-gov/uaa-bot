@@ -2,109 +2,142 @@
 
 import argparse
 import pprint
+import json
 
 from uaa_bot.bot import UAABot
 from uaa_bot.client import UAAClient
 from uaa_bot.notifier import Notifier
 
-pp = pprint.PrettyPrinter(indent=2)
 
-parser = argparse.ArgumentParser(
-    description="The uaa-bot cli.",
-)
+def main():
+    pp = pprint.PrettyPrinter(indent=2)
 
-subparsers = parser.add_subparsers(
-    dest="command", help="Run <command> help for more information."
-)
+    parser = argparse.ArgumentParser(
+        description="The uaa-bot cli.",
+    )
 
+    subparsers = parser.add_subparsers(
+        dest="command", help="Run <command> help for more information."
+    )
 
-## Bulk deactivation
-parser_bulk_deactivate = subparsers.add_parser(
-    "bulk-deactivate",
-    help=(
-        f"Deactivate accounts that have not been logged in many months ",
-        f"without sending email notification.",
-    ),
-)
+    ## Bulk deactivation
+    parser_bulk_deactivate = subparsers.add_parser(
+        "bulk-deactivate",
+        help="Deactivate accounts that have not been logged in many months without sending email notification.",
+    )
 
-parser_bulk_deactivate.add_argument(
-    "-d",
-    "--days-ago",
-    dest="days_ago",
-    type=int,
-    help="End of time range for the n number of days ago.",
-    required=True,
-    default=180,
-)
+    parser_bulk_deactivate.add_argument(
+        "-d",
+        "--days-ago",
+        dest="days_ago",
+        type=int,
+        help="End of time range for the n number of days ago.",
+        required=True,
+        default=180,
+    )
 
-parser_bulk_deactivate.add_argument(
-    "-r",
-    "--day-range",
-    dest="day_range",
-    type=int,
-    help="The n number of days to create a range before the --days-ago param.",
-    required=True,
-    default=365,
-)
+    parser_bulk_deactivate.add_argument(
+        "-r",
+        "--day-range",
+        dest="day_range",
+        type=int,
+        help="The n number of days to create a range before the --days-ago param.",
+        required=True,
+        default=365,
+    )
 
-parser_bulk_deactivate.add_argument(
-    "-t",
-    "--title",
-    dest="title",
-    type=str,
-    help="The title of the summary of the bulk deactivation.",
-    required=False,
-    default="Bulk deactivation",
-)
+    parser_bulk_deactivate.add_argument(
+        "-t",
+        "--title",
+        dest="title",
+        type=str,
+        help="The title of the summary of the bulk deactivation.",
+        required=False,
+        default="Bulk deactivation",
+    )
 
-## Notify email
-parser_notify = subparsers.add_parser(
-    "notify",
-    help="Notify users with an email to login to their accounts within 1 day or be deactivated.",
-)
+    ## Notify email
+    parser_notify = subparsers.add_parser(
+        "notify",
+        help="Notify users with an email to login to their accounts within 1 day or be deactivated.",
+    )
 
-parser_notify.add_argument(
-    "-e",
-    "--email",
-    dest="email",
-    type=str,
-    required=True,
-)
+    parser_notify.add_argument(
+        "-e",
+        "--email",
+        dest="email",
+        type=str,
+        required=True,
+    )
 
-parser_notify.add_argument(
-    "-t",
-    "--template",
-    dest="template",
-    type=str,
-    required=True,
-)
+    parser_notify.add_argument(
+        "-t",
+        "--template",
+        dest="template",
+        type=str,
+        required=True,
+    )
 
-## Notify 10 days to deactivation
-parser_notify_10_days = subparsers.add_parser(
-    "notify-10-days",
-    help="Notify users with an email to login to their accounts within 10 days or be deactivated.",
-)
+    ## Notify 10 days to deactivation
+    parser_notify_10_days = subparsers.add_parser(
+        "notify-10-days",
+        help="Notify users with an email to login to their accounts within 10 days or be deactivated.",
+    )
 
+    ## Notify 1 day to deactivation
+    parser_notify_1_day = subparsers.add_parser(
+        "notify-1-day",
+        help="Notify users with an email to login to their accounts within 1 day or be deactivated.",
+    )
 
-## Notify 1 day to deactivation
-parser_notify_1_day = subparsers.add_parser(
-    "notify-1-day",
-    help="Notify users with an email to login to their accounts within 1 day or be deactivated.",
-)
+    ## Notify and deactivate
+    parser_notify_deactivate = subparsers.add_parser(
+        "notify-deactivate",
+        help="Notify users with an email that their account has been deactivated after 90 days without logging in.",
+    )
 
-## Notify and deactivate
-parser_notify_deactivate = subparsers.add_parser(
-    "notify-deactivate",
-    help="Notify users with an email that their account has been deactivated after 90 days without logging in.",
-)
+    ## Notify and deactivate
+    parser_list_expired_accounts = subparsers.add_parser(
+        "list-expired",
+        help="List users that have to be deactivated",
+    )
 
-## Notify and deactivate
-parser_list_expired_accounts = subparsers.add_parser(
-    "list-expired",
-    help="List users that have to be deactivated",
-)
+    ## List Last Logons for Users
+    parser_list_last_logon = subparsers.add_parser(
+        "list-last-logon",
+        help="List last logon info for users",
+    )
 
-if __name__ == "__main__":
+    parser_list_last_logon.add_argument(
+        "-d",
+        "--days-ago",
+        dest="days_ago",
+        type=int,
+        help="End of time range for the n number of days ago.",
+        required=True,
+        default=180,
+    )
+
+    parser_list_last_logon.add_argument(
+        "-r",
+        "--day-range",
+        dest="day_range",
+        type=int,
+        help="The n number of days to create a range before the --days-ago param.",
+        required=True,
+        default=365,
+    )
+
+    parser_list_last_logon.add_argument(
+        "-t",
+        "--title",
+        dest="title",
+        type=str,
+        help="The title of the summary of the List Last Logon.",
+        required=False,
+        default="Last Logons for all users",
+    )
+
     args = parser.parse_args()
     bot = UAABot()
     client = UAAClient()
@@ -145,3 +178,13 @@ if __name__ == "__main__":
             guid = user.get("id", "No GUID")
             email = user.get("userName", "Not Found")
             print(f"Email: {email}, GUID: {guid}")
+
+    if args.command == "list-last-logon":
+        summary = bot.get_all_user_last_logon(days_ago=args.days_ago, days_range=args.day_range)
+        print(json.dumps(summary))
+
+    return 0
+
+
+if __name__ == "__main__":
+    exit(main())

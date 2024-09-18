@@ -1,4 +1,5 @@
 import time
+import json
 
 from uaa_bot.notifier import Notifier
 from uaa_bot.client import UAAClient
@@ -115,3 +116,50 @@ class UAABot:
             80, "Account of deactivations in 10 days", "account_expires_in_10_days"
         )
         return summary
+
+    def get_all_user_last_logon(
+        self,
+        days_ago: int = 0,
+        days_range: int = 365,
+        start_of_day: int = None,
+        end_of_day: int = None,
+        params: dict = {},
+    ) -> dict:
+        """
+        Gets list of users and their last logon info
+        """
+        users = {}
+        uaac = UAAClient(uaa_config=self.uaa_config)
+        uaac.authenticate()
+        if start_of_day and end_of_day:
+            response = uaac.list_users_last_logon_abs(
+                start_of_day=start_of_day, end_of_day=end_of_day, params=params
+            )
+        else:
+            response = uaac.list_users_last_logon_rel(
+                days_ago=days_ago, days_range=days_range, params=params
+            )
+        resources = response.get("resources")
+
+        # Get user with their last logon info
+        for user in resources:
+            users[user["id"]] = {
+                "userName": user["userName"],
+                "active": json.dumps(user["active"]),
+                "lastLogonTime": user["lastLogonTime"],
+                "lastLogonTimePretty": time.strftime(
+                    "%B %d %Y %H:%M GMT", time.gmtime(user["lastLogonTime"] / 1000)
+                ),
+            }
+
+        # Create and return summary of users' last logon
+        summary = self._summary_response_with_last_logon(users)
+        return summary
+
+    def _summary_response_with_last_logon(self, users: dict = {}) -> dict:
+        timestamp = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
+        return {
+            "timestamp": timestamp,
+            "total_accounts": len(users),
+            "user_summary": users,
+        }

@@ -4,6 +4,7 @@
 #
 #    ./dev update-requirements
 #
+
 black==24.4.2
     # via -r pip-tools/dev-requirements.in
 build==1.2.1
