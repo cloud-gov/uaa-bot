@@ -99,11 +99,32 @@ def test_client_deactivate_user(uaa_deactivate_user):
         }
     ],
 )
-def test_client_list_users_last_logon(uaa_list_users_last_logon):
+def test_client_list_users_last_logon_abs(uaa_list_users_last_logon):
     uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
     uaac.authenticate()
-    response = uaac.list_users_last_logon(start_of_day=10000, end_of_day=11000)
+    response = uaac.list_users_last_logon_abs(start_of_day=10000, end_of_day=11000)
 
     assert uaac.token == authenticated_response.get("access_token")
     assert response["totalResults"] == 200
     assert len(response["resources"]) == 200
+
+
+#@pytest.mark.parametrize(
+#    "last_logon_config",
+#    [
+#        {
+#            "total_results": 200,
+#            "results_per_page": 100,
+#            "days_ago": 0,
+#            "days_range": 2,
+#        }
+#    ],
+#)
+#def test_client_list_users_last_logon_rel(uaa_list_users_last_logon):
+#    uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
+#    uaac.authenticate()
+#    response = uaac.list_users_last_logon_rel(days_ago=0, days_range=2)
+#
+#    assert uaac.token == authenticated_response.get("access_token")
+#    assert response["totalResults"] == 200
+#    assert len(response["resources"]) == 200

@@ -132,11 +132,11 @@ class UAABot:
         uaac = UAAClient(uaa_config=self.uaa_config)
         uaac.authenticate()
         if start_of_day and end_of_day:
-            response = uaac.list_users_last_logon(
+            response = uaac.list_users_last_logon_abs(
                 start_of_day=start_of_day, end_of_day=end_of_day, params=params
             )
         else:
-            response = uaac.list_users_last_logon(
+            response = uaac.list_users_last_logon_rel(
                 days_ago=days_ago, days_range=days_range, params=params
             )
         resources = response.get("resources")
