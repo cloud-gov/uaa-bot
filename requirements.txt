@@ -4,9 +4,6 @@
 #
 #    ./dev update-requirements
 #
---trusted-host pypi.python.org
---trusted-host pypi.org
---trusted-host files.pythonhosted.org
 
 certifi==2024.7.4
     # via requests

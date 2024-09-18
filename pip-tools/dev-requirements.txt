@@ -4,9 +4,6 @@
 #
 #    ./dev update-requirements
 #
---trusted-host pypi.python.org
---trusted-host pypi.org
---trusted-host files.pythonhosted.org
 
 black==24.4.2
     # via -r pip-tools/dev-requirements.in
