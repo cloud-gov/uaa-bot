@@ -327,12 +327,6 @@ class UAAClient:
         """
         params = kwargs.get("params", {})
 
-        if days_ago is None:
-            days_ago = 0
-
-        if days_range is None:
-            days_ago = 1
-
         start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
         end_of_day = self._get_past_epoch_in_ms(days_ago)
 
