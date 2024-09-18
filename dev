@@ -62,7 +62,7 @@ watch-tests() {
 }
 
 update-requirements() {
-  bash `pwd`/update-requirements.sh
+  bash `pwd`/update-requirements.sh "$@"
 }
 
 usage() {
@@ -80,7 +80,7 @@ usage() {
     $me watch-tests
     # Generate the pip-tools/*requirements.txt files from
     # pip-tools/*requirements.in
-    $me update-requirements
+    $me update-requirements [--upgrade]
 	EOF
   exit 1
 }
