@@ -353,7 +353,7 @@ jobs:
     file: src-repository/ci/run-bot-command-no-date.yml
     params:
       BUILD_JOB_NAME: development-list-lastlogon
-      BOT_COMMAND: list-last-logon -d 0 -r 14400
+      BOT_COMMAND: list-last-logon -d 0 -r 365
       UAA_BASE_URL: ((uaa-base-url-development))
       UAA_CLIENT_ID: ((uaa-client-id-development))
       UAA_CLIENT_SECRET: ((uaa-client-secret-development))

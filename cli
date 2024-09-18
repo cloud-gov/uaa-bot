@@ -180,7 +180,7 @@ def main():
             print(f"Email: {email}, GUID: {guid}")
 
     if args.command == "list-last-logon":
-        summary = bot.get_all_user_last_logon(days_ago=0, days_range=365)
+        summary = bot.get_all_user_last_logon(days_ago=args.days_ago, days_range=args.day_range)
         print(json.dumps(summary))
 
     return 0
