@@ -99,10 +99,10 @@ def test_client_deactivate_user(uaa_deactivate_user):
         }
     ],
 )
-def test_client_list_users_last_logon(uaa_list_users_last_logon):
+def test_client_list_users_last_logon_abs(uaa_list_users_last_logon):
     uaac = client.UAAClient(base_url, uaa_config=UAA_CONFIG)
     uaac.authenticate()
-    response = uaac.list_users_last_logon(start_of_day=10000, end_of_day=11000)
+    response = uaac.list_users_last_logon_abs(start_of_day=10000, end_of_day=11000)
 
     assert uaac.token == authenticated_response.get("access_token")
     assert response["totalResults"] == 200

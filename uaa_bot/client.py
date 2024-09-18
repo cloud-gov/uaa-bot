@@ -270,16 +270,14 @@ class UAAClient:
 
         return response
 
-    def list_users_last_logon(
+    def list_users_last_logon_abs(
         self,
-        days_ago: int = 0,
-        days_range: int = 365,
         start_of_day: int = None,
         end_of_day: int = None,
         **kwargs,
     ) -> dict:
         """
-        Gets a list of users and their last log on
+        Gets a list of users and their last log on, defaults to the last 24 hours
         Raises:UAAError: there was an error getting users
         Returns:
             dict: the list of users with last login
@@ -287,10 +285,10 @@ class UAAClient:
         params = kwargs.get("params", {})
 
         if start_of_day is None:
-            start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
+            start_of_day = self._get_past_epoch_in_ms(1)
 
         if end_of_day is None:
-            end_of_day = self._get_past_epoch_in_ms(days_ago)
+            end_of_day = self._get_past_epoch_in_ms(0)
 
         scim_last_logon = (
             f"last_logon_success_time ge {start_of_day}"
@@ -314,3 +312,30 @@ class UAAClient:
         )
 
         return response
+
+    def list_users_last_logon_rel(
+        self,
+        days_ago: int = 0,
+        days_range: int = 365,
+        **kwargs,
+    ) -> dict:
+        """
+        Gets a list of users and their last log on
+        Raises:UAAError: there was an error getting users
+        Returns:
+            dict: the list of users with last login
+        """
+        params = kwargs.get("params", {})
+
+        if days_ago is None:
+            days_ago = 0
+
+        if days_range is None:
+            days_ago = 1
+
+        start_of_day = self._get_past_epoch_in_ms(days_ago + days_range)
+        end_of_day = self._get_past_epoch_in_ms(days_ago)
+
+        return self.list_users_last_logon_abs(
+            start_of_day=start_of_day, end_of_day=end_of_day, params=params
+        )
