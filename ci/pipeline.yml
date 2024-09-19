@@ -375,8 +375,8 @@ jobs:
 
 - name: bot-staging-list-lastlogon
   plan:
-#  - get: daily-timer
-#    trigger: true
+  - get: daily-timer
+    trigger: true
   - get: general-task
   - get: src-repository
     resource: src-repository
