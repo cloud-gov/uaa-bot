@@ -370,15 +370,40 @@ jobs:
       channel: ((slack-info-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-  on_success:
+
+
+
+- name: bot-staging-list-lastlogon
+  plan:
+#  - get: daily-timer
+#    trigger: true
+  - get: general-task
+  - get: src-repository
+    resource: src-repository
+    passed: [test-bot, bot-development-list-lastlogon]
+  - task: run-bot-staging-list-lastlogon
+    image: general-task
+    file: src-repository/ci/run-bot-command-no-date.yml
+    params:
+      BUILD_JOB_NAME: staging-list-lastlogon
+      BOT_COMMAND: list-last-logon -d 0 -r 365
+      UAA_BASE_URL: ((uaa-base-url-staging))
+      UAA_CLIENT_ID: ((uaa-client-id-staging))
+      UAA_CLIENT_SECRET: ((uaa-client-secret-staging))
+  - put: staging-dashboard-bucket
+    tags: [iaas]
+    params:
+      file: uaa-bot-summary/*-summary*.json
+  on_failure:
     put: slack
     params:
       text: |
-        :white_check_mark: Successfully listed last logon for users in development with uaa-bot
+        :x: FAILED to list last logon for users in staging with uaa-bot
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: ((slack-info-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
+
 
 ###########
 # Resources
@@ -419,12 +444,24 @@ resources:
   type: s3-iam
   icon: database
   source:
-    bucket: ((dashboard-bucket-development))
+    bucket: ((dashboard-bucket-development))  # Provided by the Dashboard team
     region_name: ((uaa-bot-region))
     regexp: (.*)summary(.*).json
     server_side_encryption: AES256
   tags:
   - iaas
+
+- name: staging-dashboard-bucket
+  type: s3-iam
+  icon: database
+  source:
+    bucket: ((dashboard-bucket-staging))  # Provided by the Dashboard team
+    region_name: ((uaa-bot-region))
+    regexp: (.*)summary(.*).json
+    server_side_encryption: AES256
+  tags:
+  - iaas
+
 
 - name: general-task
   type: registry-image
