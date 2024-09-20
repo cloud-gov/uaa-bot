@@ -439,6 +439,7 @@ resources:
     region_name: ((uaa-bot-region))
     regexp: /uaa-bot/(.*)-summary-(.*).json
     server_side_encryption: AES256
+    endpoint: s3-fips.((uaa-bot-region)).amazonaws.com
 
 - name: development-dashboard-bucket
   type: s3-iam
@@ -448,6 +449,7 @@ resources:
     region_name: ((uaa-bot-region))
     regexp: (.*)summary(.*).json
     server_side_encryption: AES256
+    endpoint: s3-fips.((uaa-bot-region)).amazonaws.com
   tags:
   - iaas
 
@@ -459,6 +461,7 @@ resources:
     region_name: ((uaa-bot-region))
     regexp: (.*)summary(.*).json
     server_side_encryption: AES256
+    endpoint: s3-fips.((uaa-bot-region)).amazonaws.com
   tags:
   - iaas
 
