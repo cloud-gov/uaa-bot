@@ -6,6 +6,5 @@ flake8
 mock
 pip-tools
 pytest
-pytest-profiling
 pytest-watch
 requests-mock
