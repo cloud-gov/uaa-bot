@@ -1,4 +1,4 @@
-urllib3==1.26.19
+urllib3
 email_validator
 Jinja2
 requests
