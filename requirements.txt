@@ -22,7 +22,7 @@ markupsafe==3.0.2
     # via jinja2
 requests==2.32.4
     # via -r pip-tools/requirements.in
-urllib3==2.5.0
+urllib3==2.6.3
     # via
     #   -r pip-tools/requirements.in
     #   requests
