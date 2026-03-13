@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=pip-tools/dev-requirements.txt pip-tools/dev-requirements.in
 #
-black==25.1.0
+black==26.3.1
     # via -r dev-requirements.in
 build==1.2.2.post1
     # via pip-tools
@@ -59,7 +59,7 @@ packaging==25.0
     #   build
     #   pytest
     #   wheel
-pathspec==0.12.1
+pathspec==1.0.4
     # via black
 pip-tools==7.4.1
     # via -r dev-requirements.in
@@ -83,13 +83,15 @@ pytest==8.4.1
     #   pytest-watch
 pytest-watch==4.2.0
     # via -r dev-requirements.in
+pytokens==0.4.1
+    # via black
 requests==2.32.4
     # via
     #   -r ../requirements.txt
     #   requests-mock
 requests-mock==1.12.1
     # via -r dev-requirements.in
-urllib3==2.5.0
+urllib3==2.6.3
     # via
     #   -r ../requirements.txt
     #   requests
