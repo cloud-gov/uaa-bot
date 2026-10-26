@@ -10,11 +10,11 @@ build==1.2.2.post1
     # via pip-tools
 certifi==2025.6.15
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   requests
 charset-normalizer==3.4.2
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   requests
 click==8.2.1
     # via
@@ -26,26 +26,26 @@ colorama==0.4.4
     #   pytest-watch
 dnspython==2.7.0
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   email-validator
 docopt==0.6.2
     # via pytest-watch
 email-validator==2.2.0
-    # via -r pip-tools/../requirements.txt
+    # via -r requirements.txt
 flake8==7.3.0
     # via -r pip-tools/dev-requirements.in
 idna==3.15
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   email-validator
     #   requests
 iniconfig==2.1.0
     # via pytest
 jinja2==3.1.6
-    # via -r pip-tools/../requirements.txt
+    # via -r requirements.txt
 markupsafe==3.0.2
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   jinja2
 mccabe==0.7.0
     # via flake8
@@ -71,7 +71,7 @@ pycodestyle==2.14.0
     # via flake8
 pyflakes==3.4.0
     # via flake8
-pygments==2.19.2
+pygments==2.20.0
     # via pytest
 pyproject-hooks==1.2.0
     # via
@@ -87,13 +87,13 @@ pytokens==0.4.1
     # via black
 requests==2.33.0
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   requests-mock
 requests-mock==1.12.1
     # via -r pip-tools/dev-requirements.in
-urllib3==2.7.0
+urllib3==2.8.0
     # via
-    #   -r pip-tools/../requirements.txt
+    #   -r requirements.txt
     #   requests
 watchdog==6.0.0
     # via pytest-watch
