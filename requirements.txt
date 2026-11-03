@@ -4,11 +4,11 @@
 #
 #    pip-compile --output-file=requirements.txt pip-tools/requirements.in
 #
-certifi==2025.6.15
+certifi==2026.10.18
     # via requests
 charset-normalizer==3.4.2
     # via requests
-dnspython==2.7.0
+dnspython==2.9.0
     # via email-validator
 email-validator==2.2.0
     # via -r pip-tools/requirements.in
