@@ -16,7 +16,6 @@ SMTP_KEYS = {
     "SMTP_FROM": "no-reply@example.com",
     "SMTP_USER": None,
     "SMTP_PASS": None,
-    "SMTP_CERT": None,
 }
 
 UAA_KEYS = {

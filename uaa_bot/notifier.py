@@ -93,8 +93,6 @@ class Notifier:
 
         # if we have a cert, then trust it
         sslcontext = ssl.create_default_context()
-        if self.smtp_config["SMTP_CERT"] is not None:
-            sslcontext.load_verify_locations(cadata=self.smtp_config["SMTP_CERT"])
         s.starttls(context=sslcontext)
 
         # if smtp credentials were provided, login
